@@ -12,24 +12,26 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 class LoadingViewModel extends ViewModel {
-    MutableLiveData<ArrayList<String>> line;
+    MutableLiveData<Chat> chat;
+    ChatLoadingThread clt;
 
     LoadingViewModel() {
-        line = new MutableLiveData<>();
+        chat = new MutableLiveData<>();
     }
 
     void load(ContentResolver conres, Uri uri) {
+
         try {
             InputStream is = conres.openInputStream(uri);
             InputStreamReader isr = new InputStreamReader(is);
             BufferedReader br = new BufferedReader(isr);
-            ArrayList<String> lines = new ArrayList<>();
-            while(br.ready()){
-                lines.add(br.readLine());
-            }
-            line.setValue(lines);
+            clt = new ChatLoadingThread(br);
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    void setChat(Chat c){
+        chat.setValue(c);
     }
 }
