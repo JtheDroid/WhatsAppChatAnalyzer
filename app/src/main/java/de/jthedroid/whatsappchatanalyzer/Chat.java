@@ -48,6 +48,10 @@ class Chat {
         sortedSenders = senderTree.sort();
     }
 
+    int getMaxMsgCount(){
+        return sortedSenders.get(sortedSenders.size()-1).getMsgCount();
+    }
+
     @Override
     public String toString() {
         StringBuilder s = new StringBuilder();

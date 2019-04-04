@@ -20,7 +20,21 @@ public class ShareActivity extends AppCompatActivity {
         final Observer<Chat> chatObserver = new Observer<Chat>() {
             @Override
             public void onChanged(@Nullable Chat c) {
-                ((TextView) findViewById(R.id.textViewInfo)).setText(c == null ? "null" : c.toString());
+                ((TextView) findViewById(R.id.textViewInfo)).setText(c == null ? "null" : "Geladen!"/*c.toString()*/);
+                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+                for (Sender sender : c.sortedSenders) {
+                    if (getSupportFragmentManager().findFragmentByTag(sender.toString()) == null) {
+                        SenderFragment sf = new SenderFragment();
+                        Bundle b = new Bundle();
+                        b.putString("name", sender.name);
+                        b.putInt("count", sender.getMsgCount());
+                        b.putInt("maxCount",c.getMaxMsgCount());
+                        sf.setArguments(b);
+                        transaction.add(R.id.linearLayoutSender, sf, sender.toString());
+                    }
+
+                }
+                transaction.commit();
             }
         };
         TextView infoTextView = findViewById(R.id.textViewInfo);
@@ -41,16 +55,9 @@ public class ShareActivity extends AppCompatActivity {
                 //infoTextView.setText(action + " " + type + "\nText:\n" + text + "\n" + uri + "\n");
                 viewModel.chat.observe(this, chatObserver);
             }
-        }else{
+        } else {
             //infoTextView.setText("Reloaded");
             chatObserver.onChanged(viewModel.chat.getValue());
-            SenderFragment sf = SenderFragment.newInstance();
-            Bundle b = new Bundle();
-            b.putString("text","Das ist ein Test");
-            sf.setArguments(b);
-            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-            transaction.add(R.id.linearLayoutSender,sf);
-            transaction.commit();
         }
     }
 }
