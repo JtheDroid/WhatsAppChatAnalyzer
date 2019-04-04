@@ -4,50 +4,59 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Objects;
+
+import de.jthedroid.whatsappchatanalyzer.bintree.BinTree;
 
 class Chat {
-    static HashMap<String, Sender> senders = new HashMap<>();
-    static HashMap<Sender, Integer> messageCount = new HashMap<>();
+    HashMap<String, Sender> senders = new HashMap<>();
+    HashMap<Sender, Integer> messageCount = new HashMap<>();
+    ArrayList<Sender> sortedSenders;
 
     void init(BufferedReader br) throws IOException {
         ArrayList<String> lines = new ArrayList<>();
+        ArrayList<String> strings = new ArrayList<>();
         ArrayList<Message> msgs = new ArrayList<>();
-        while(br.ready()){
+        while (br.ready()) {
+            lines.add(br.readLine());
+        }
+        br.close();
+        for (String l : lines) {
             //             1/1/17, 05:55 -
             //             12/12/17, 05:55 -
-            if (t.matches("^(\\d\\d?/){2}\\d\\d?, \\d\\d?:\\d\\d? - .*")) {
-                lines.add(t);
+            if (l.matches("^(\\d\\d?/){2}\\d\\d?, \\d\\d?:\\d\\d? - .*")) {
+                strings.add(l);
             } else {
-                if (!lines.isEmpty()) {
-                    String line = lines.get(lines.size() - 1);
-                    lines.remove(line);
-                    lines.add(line + "\n" + t);
+                if (!strings.isEmpty()) {
+                    String line = strings.get(strings.size() - 1);
+                    strings.remove(line);
+                    strings.add(line + "\n" + l);
                 }
             }
-
         }
-        for (String line : lines) {
-            Message m = new Message(line);
+        for (String s : strings) {
+            Message m = new Message(s, this);
             m.init();
             msgs.add(m);
         }
-        for (Message msg : msgs) {
-            System.out.println(msg.toString());
-        }
-        System.out.println("\n\n");
-        for (Sender sender : WhatsAppChatAnalyzer.messageCount.keySet()) {
-            System.out.println(sender.name + ": " + WhatsAppChatAnalyzer.messageCount.get(sender));
-        }
-        System.out.println("\n\n");
-        Object[] senderList =  WhatsAppChatAnalyzer.messageCount.keySet().toArray();
-        BinTree senderTree = new BinTree((Sender)senderList[0]);
+        Object[] senderList = messageCount.keySet().toArray();
+        BinTree<Sender> senderTree = new BinTree<>((Sender) Objects.requireNonNull(senderList)[0]);
         for (int i = 1; i < senderList.length; i++) {
-            Sender sender = (Sender)senderList[i];
+            Sender sender = (Sender) senderList[i];
             senderTree.addContent(sender);
         }
-        ArrayList<Sender> sortedSenders = senderTree.sort();
-        for(Sender sender : sortedSenders){
-            System.out.println(sender.name+" : " + sender.getMsgCount() + " messages");
+        sortedSenders = senderTree.sort();
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder s = new StringBuilder();
+        for (Sender sender : sortedSenders) {
+            s.append(sender.getName());
+            s.append(", ");
+            s.append(sender.getMsgCount());
+            s.append("\n");
         }
+        return s.toString();
     }
 }

@@ -25,13 +25,14 @@ class LoadingViewModel extends ViewModel {
             InputStream is = conres.openInputStream(uri);
             InputStreamReader isr = new InputStreamReader(is);
             BufferedReader br = new BufferedReader(isr);
-            clt = new ChatLoadingThread(br);
+            clt = new ChatLoadingThread(br, this);
+            clt.start();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
     void setChat(Chat c){
-        chat.setValue(c);
+        chat.postValue(c);
     }
 }

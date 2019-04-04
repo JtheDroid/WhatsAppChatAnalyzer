@@ -1,11 +1,11 @@
-package bintree;
+package de.jthedroid.whatsappchatanalyzer.bintree;
 
 import java.util.ArrayList;
 
-public class BinTree<T extends Sortable> {
+public class BinTree<T extends bintree.Sortable> {
 
     private final T content;
-    private BinTree left, right;
+    private BinTree<T> left, right;
 
     public BinTree(T content) {
         this.content = content;
@@ -30,13 +30,13 @@ public class BinTree<T extends Sortable> {
     public void addContent(T newContent) {
         if (newContent.getNum() < content.getNum()) {
             if (left == null) {
-                left = new BinTree(newContent);
+                left = new BinTree<>(newContent);
             } else {
                 left.addContent(newContent);
             }
         } else {
             if (right == null) {
-                right = new BinTree(newContent);
+                right = new BinTree<>(newContent);
             } else {
                 right.addContent(newContent);
             }

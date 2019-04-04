@@ -7,15 +7,22 @@ import java.util.ArrayList;
 class ChatLoadingThread extends Thread {
     Chat chat;
     private BufferedReader br;
+    private LoadingViewModel lvm;
 
-    ChatLoadingThread(BufferedReader br) {
+    ChatLoadingThread(BufferedReader br, LoadingViewModel lvm) {
         this.br = br;
+        this.lvm = lvm;
     }
 
     @Override
     public void run() {
         super.run();
         chat = new Chat();
-        chat.init(br);
+        try {
+            chat.init(br);
+            lvm.setChat(chat);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

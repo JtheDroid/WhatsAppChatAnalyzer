@@ -3,4 +3,5 @@
     <string name="whatsapp_info">To start, open WhatsApp, select a chat, open the menu, tap on More, then Export Chat, choose Without Media and select this app</string>
     <string name="open_whatsapp">Open WhatsApp</string>
     <string name="whatsapp_open_error">Couldn\'t open WhatsApp</string>
+    <string name="loading">Loading...</string>
 </resources>

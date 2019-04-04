@@ -1,21 +1,23 @@
 package de.jthedroid.whatsappchatanalyzer;
 
 import java.text.DateFormat;
-import java.text.ParseException;
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
+
 public class Message {
+    static DateFormat df = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT, Locale.GERMANY);
+    static SimpleDateFormat sdf = new SimpleDateFormat("M/d/yy, HH:mm");
+    Chat chat;
     Date date;
     boolean hasSender;
     String msg, senderStr;
     Sender sender = null;
-    static DateFormat df = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT, Locale.GERMANY);
-    static SimpleDateFormat sdf = new SimpleDateFormat("M/d/yy, HH:mm");
 
-    Message(String s) throws ParseException {
+    Message(String s, Chat c) {
+        this.chat = c;
         ParsePosition pp = new ParsePosition(0);
         date = sdf.parse(s, pp);
         int senderPos = pp.getIndex() + 3, colPos = s.indexOf(":", pp.getIndex());
@@ -27,18 +29,18 @@ public class Message {
             hasSender = true;
             senderStr = s.substring(senderPos, colPos);
             msg = s.substring(colPos + 1);
-            if (WhatsAppChatAnalyzer.senders.containsKey(senderStr)) {
-                sender = WhatsAppChatAnalyzer.senders.get(senderStr);
+            if (chat.senders.containsKey(senderStr)) {
+                sender = chat.senders.get(senderStr);
             } else {
                 sender = new Sender(senderStr);
-                WhatsAppChatAnalyzer.senders.put(senderStr, sender);
+                chat.senders.put(senderStr, sender);
             }
-            WhatsAppChatAnalyzer.messageCount.put(sender, WhatsAppChatAnalyzer.messageCount.getOrDefault(sender, 0) + 1);
+            chat.messageCount.put(sender, (chat.messageCount.containsKey(sender) ? chat.messageCount.get(sender) : 0) + 1);
         }
     }
 
-    public void init(){
-        if(hasSender){
+    public void init() {
+        if (hasSender) {
             sender.addMessage(this);
         }
     }
