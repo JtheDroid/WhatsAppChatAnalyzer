@@ -8,6 +8,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.Toast;
 
 import java.util.Locale;
 
@@ -47,6 +48,8 @@ public class ShareActivity extends AppCompatActivity {
                     transaction.commit();
                     findViewById(R.id.progressBarLoading).setVisibility(View.GONE);
                     findViewById(R.id.textViewLoading).setVisibility(View.GONE);
+                } else {
+                    Toast.makeText(getApplicationContext(), R.string.toast_error_loading, Toast.LENGTH_LONG).show();
                 }
             }
         };

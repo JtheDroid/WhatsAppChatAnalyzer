@@ -19,10 +19,10 @@ class LoadingViewModel extends ViewModel {
         title = new MutableLiveData<>();
     }
 
-    void load(ContentResolver conres, Uri uri) {
+    void load(ContentResolver contentResolver, Uri uri) {
 
         try {
-            InputStream is = conres.openInputStream(uri);
+            InputStream is = contentResolver.openInputStream(uri);
             InputStreamReader isr = new InputStreamReader(is);
             BufferedReader br = new BufferedReader(isr);
             ChatLoadingThread clt = new ChatLoadingThread(br, this);

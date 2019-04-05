@@ -1,9 +1,11 @@
 package de.jthedroid.whatsappchatanalyzer;
 
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -11,8 +13,8 @@ import de.jthedroid.whatsappchatanalyzer.bintree.BinTree;
 
 class Chat {
     final HashMap<String, Sender> senders = new HashMap<>();
-    ArrayList<Sender> sortedSenders;
     private final ArrayList<Message> messages = new ArrayList<>();
+    ArrayList<Sender> sortedSenders;
 
     void init(BufferedReader br) throws IOException {
         ArrayList<String> lines = new ArrayList<>();
@@ -24,7 +26,8 @@ class Chat {
         for (String l : lines) {
             //             1/1/17, 05:55 -
             //             12/12/17, 05:55 -
-            if (l.matches("^(\\d\\d?/){2}\\d\\d?, \\d\\d?:\\d\\d? - .*")) {
+            //             05.04.19, 16:53 -
+            if (l.matches("^\\d+.*\\d+, \\d+.* - .*")) {
                 strings.add(l);
             } else {
                 if (!strings.isEmpty()) {
@@ -35,8 +38,12 @@ class Chat {
             }
         }
         for (String s : strings) {
-            Message m = new Message(s, this);
-            messages.add(m);
+            try {
+                Message m = new Message(s, this);
+                messages.add(m);
+            } catch (ParseException e) {
+                Log.e("Chat ParseException", e.toString());
+            }
         }
         ArrayList<Sender> senderList = new ArrayList<>(senders.values());
         BinTree<Sender> senderTree = new BinTree<>(senderList.get(0));
