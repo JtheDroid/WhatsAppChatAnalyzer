@@ -8,6 +8,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+
 import java.util.Locale;
 
 public class ShareActivity extends AppCompatActivity {
@@ -50,23 +51,29 @@ public class ShareActivity extends AppCompatActivity {
             }
         };
         Intent intent = getIntent();
-        String title = intent.getStringExtra(Intent.EXTRA_TEXT);
-        if (title.contains("\"")) {
-            title = title.substring(title.indexOf('"') + 1, title.lastIndexOf('"'));
-        }
-        setTitle(title);
         if (savedInstanceState == null) {
 
             //String action = intent.getAction();
             String type = intent.getType();
 
             if (type != null) {
+                //save title String in viewModel
+                String title = intent.getStringExtra(Intent.EXTRA_TEXT);
+                if (title.contains("\"")) {
+                    title = title.substring(title.indexOf('"') + 1, title.lastIndexOf('"'));
+                }
+                setTitle(title);
+                viewModel.title.setValue(title);
+                //start loading chat .txt file
                 String uriStr = intent.getParcelableArrayListExtra(Intent.EXTRA_STREAM).get(0).toString();
                 Uri uri = Uri.parse(uriStr);
                 viewModel.load(getContentResolver(), uri);
                 viewModel.chat.observe(this, chatObserver);
             }
         } else {
+            //load title
+            setTitle(viewModel.title.getValue());
+            //load data from Chat
             chatObserver.onChanged(viewModel.chat.getValue());
         }
     }
