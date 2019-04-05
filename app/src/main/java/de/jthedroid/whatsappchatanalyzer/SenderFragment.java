@@ -43,7 +43,7 @@ public class SenderFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.sender_fragment, container, false);
+        View v = inflater.inflate(R.layout.fragment_sender, container, false);
         ((TextView) v.findViewById(R.id.textViewName)).setText(name);
         ((TextView) v.findViewById(R.id.textViewCount)).setText(String.format(Locale.getDefault(),"%d",count));
         ProgressBar progressBar = v.findViewById(R.id.progressBarMsgCount);
