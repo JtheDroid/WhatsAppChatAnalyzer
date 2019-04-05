@@ -6,4 +6,6 @@
     <string name="loading">Loading…</string>
     <string name="sent_messages">Sent Messages</string>
     <string name="toast_error_loading">Error while loading</string>
+    <string name="toast_faulty_data">Can\'t handle shared data</string>
+    <string name="open_exported_txt">Open .txt file</string>
 </resources>

@@ -4,12 +4,14 @@ import android.arch.lifecycle.Observer;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.Locale;
 
 public class ShareActivity extends AppCompatActivity {
@@ -68,8 +70,17 @@ public class ShareActivity extends AppCompatActivity {
                 setTitle(title);
                 viewModel.title.setValue(title);
                 //start loading chat .txt file
-                String uriStr = intent.getParcelableArrayListExtra(Intent.EXTRA_STREAM).get(0).toString();
-                Uri uri = Uri.parse(uriStr);
+                Uri uri = null;
+                ArrayList<Parcelable> extraList = intent.getParcelableArrayListExtra(Intent.EXTRA_STREAM);
+                if (extraList != null && !extraList.isEmpty()) {
+                    Parcelable p = extraList.get(0);
+                    if (p instanceof Uri) {
+                        uri = (Uri) p;
+                    }
+                }
+                if (uri == null) {
+                    Toast.makeText(this, R.string.toast_faulty_data, Toast.LENGTH_LONG).show();
+                }
                 viewModel.load(getContentResolver(), uri);
                 viewModel.chat.observe(this, chatObserver);
             }

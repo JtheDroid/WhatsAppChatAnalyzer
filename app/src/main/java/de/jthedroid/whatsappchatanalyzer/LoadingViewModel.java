@@ -20,15 +20,16 @@ class LoadingViewModel extends ViewModel {
     }
 
     void load(ContentResolver contentResolver, Uri uri) {
-
-        try {
-            InputStream is = contentResolver.openInputStream(uri);
-            InputStreamReader isr = new InputStreamReader(is);
-            BufferedReader br = new BufferedReader(isr);
-            ChatLoadingThread clt = new ChatLoadingThread(br, this);
-            clt.start();
-        } catch (IOException e) {
-            e.printStackTrace();
+        if (uri != null) {
+            try {
+                InputStream is = contentResolver.openInputStream(uri);
+                InputStreamReader isr = new InputStreamReader(is);
+                BufferedReader br = new BufferedReader(isr);
+                ChatLoadingThread clt = new ChatLoadingThread(br, this);
+                clt.start();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
