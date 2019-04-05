@@ -8,16 +8,14 @@ import java.util.Locale;
 
 
 public class Message {
-    static DateFormat df = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT, Locale.GERMANY);
-    static SimpleDateFormat sdf = new SimpleDateFormat("M/d/yy, HH:mm");
-    Chat chat;
-    Date date;
-    boolean hasSender;
-    String msg, senderStr;
-    Sender sender = null;
+    private static DateFormat df = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT, Locale.GERMANY);
+    private static SimpleDateFormat sdf = new SimpleDateFormat("M/d/yy, HH:mm");
+    private Date date;
+    private boolean hasSender;
+    private String msg, senderStr;
+    private Sender sender = null;
 
     Message(String s, Chat c) {
-        this.chat = c;
         ParsePosition pp = new ParsePosition(0);
         date = sdf.parse(s, pp);
         int senderPos = pp.getIndex() + 3, colPos = s.indexOf(":", pp.getIndex());
@@ -29,17 +27,13 @@ public class Message {
             hasSender = true;
             senderStr = s.substring(senderPos, colPos);
             msg = s.substring(colPos + 1);
-            if (chat.senders.containsKey(senderStr)) {
-                sender = chat.senders.get(senderStr);
+            if (c.senders.containsKey(senderStr)) {
+                sender = c.senders.get(senderStr);
             } else {
                 sender = new Sender(senderStr);
-                chat.senders.put(senderStr, sender);
+                c.senders.put(senderStr, sender);
             }
-            chat.messageCount.put(sender, (chat.messageCount.containsKey(sender) ? chat.messageCount.get(sender) : 0) + 1);
         }
-    }
-
-    public void init() {
         if (hasSender) {
             sender.addMessage(this);
         }

@@ -4,13 +4,11 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Objects;
 
 import de.jthedroid.whatsappchatanalyzer.bintree.BinTree;
 
 class Chat {
     HashMap<String, Sender> senders = new HashMap<>();
-    HashMap<Sender, Integer> messageCount = new HashMap<>();
     ArrayList<Sender> sortedSenders;
 
     void init(BufferedReader br) throws IOException {
@@ -36,20 +34,19 @@ class Chat {
         }
         for (String s : strings) {
             Message m = new Message(s, this);
-            m.init();
             msgs.add(m);
         }
-        Object[] senderList = messageCount.keySet().toArray();
-        BinTree<Sender> senderTree = new BinTree<>((Sender) Objects.requireNonNull(senderList)[0]);
-        for (int i = 1; i < senderList.length; i++) {
-            Sender sender = (Sender) senderList[i];
+        ArrayList<Sender> senderList = new ArrayList<>(senders.values());
+        BinTree<Sender> senderTree = new BinTree<>(senderList.get(0));
+        for (int i = 1; i < senderList.size(); i++) {
+            Sender sender = senderList.get(i);
             senderTree.addContent(sender);
         }
         ArrayList<Sender> tempList = senderTree.sort();
         sortedSenders = new ArrayList<>(tempList);
         int size = tempList.size();
         sortedSenders.ensureCapacity(size);
-        for (int i = size-1; i >= 0; i--) {
+        for (int i = size - 1; i >= 0; i--) {
             sortedSenders.set(size - 1 - i, tempList.get(i));
         }
     }
