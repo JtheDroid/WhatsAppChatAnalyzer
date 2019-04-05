@@ -10,9 +10,9 @@ import java.util.HashMap;
 import de.jthedroid.whatsappchatanalyzer.bintree.BinTree;
 
 class Chat {
-    HashMap<String, Sender> senders = new HashMap<>();
+    final HashMap<String, Sender> senders = new HashMap<>();
     ArrayList<Sender> sortedSenders;
-    private ArrayList<Message> msgs = new ArrayList<>();
+    private final ArrayList<Message> messages = new ArrayList<>();
 
     void init(BufferedReader br) throws IOException {
         ArrayList<String> lines = new ArrayList<>();
@@ -36,7 +36,7 @@ class Chat {
         }
         for (String s : strings) {
             Message m = new Message(s, this);
-            msgs.add(m);
+            messages.add(m);
         }
         ArrayList<Sender> senderList = new ArrayList<>(senders.values());
         BinTree<Sender> senderTree = new BinTree<>(senderList.get(0));
@@ -58,7 +58,7 @@ class Chat {
     }
 
     int getMsgCount() {
-        return msgs.size();
+        return messages.size();
     }
 
     @Override

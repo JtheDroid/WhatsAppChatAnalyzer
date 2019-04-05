@@ -1,6 +1,6 @@
 
-package bintree;
+package de.jthedroid.whatsappchatanalyzer.bintree;
 
 public interface Sortable {
-    public int getNum();
+    int getNum();
 }

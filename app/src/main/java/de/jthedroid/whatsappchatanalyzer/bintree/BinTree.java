@@ -2,7 +2,7 @@ package de.jthedroid.whatsappchatanalyzer.bintree;
 
 import java.util.ArrayList;
 
-public class BinTree<T extends bintree.Sortable> {
+public class BinTree<T extends Sortable> {
 
     private final T content;
     private BinTree<T> left, right;
@@ -17,7 +17,7 @@ public class BinTree<T extends bintree.Sortable> {
         return list;
     }
 
-    public void sort(ArrayList<T> list) {
+    private void sort(ArrayList<T> list) {
         if (left != null) {
             left.sort(list);
         }
@@ -48,19 +48,19 @@ public class BinTree<T extends bintree.Sortable> {
         return content;
     }
 
-    public BinTree getLeft() {
+    public BinTree<T> getLeft() {
         return left;
     }
 
-    public void setLeft(BinTree left) {
+    public void setLeft(BinTree<T> left) {
         this.left = left;
     }
 
-    public BinTree getRight() {
+    public BinTree<T> getRight() {
         return right;
     }
 
-    public void setRight(BinTree right) {
+    public void setRight(BinTree<T> right) {
         this.right = right;
     }
 //</editor-fold>

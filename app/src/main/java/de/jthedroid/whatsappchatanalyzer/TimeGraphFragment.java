@@ -17,7 +17,7 @@ import android.widget.FrameLayout;
 
 public class TimeGraphFragment extends Fragment {
     private static final String VALUES_X = "valuesX", VALUES_Y = "valuesY";
-    float[] valuesX, valuesY;
+    private float[] valuesX, valuesY;
 
     public TimeGraphFragment() {
     }
@@ -50,11 +50,11 @@ public class TimeGraphFragment extends Fragment {
     }
 
     private class GraphView extends View {
-        Point display;
-        float[] valuesX, valuesY;
-        private Paint p;
+        final Point display;
+        final float[] valuesX, valuesY;
+        private final Paint p;
 
-        public GraphView(Context context, float[] valuesX, float[] valuesY) {
+        GraphView(Context context, float[] valuesX, float[] valuesY) {
             super(context);
             this.valuesX = valuesX;
             this.valuesY = valuesY;

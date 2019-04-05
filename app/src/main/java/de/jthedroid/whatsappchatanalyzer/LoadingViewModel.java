@@ -11,8 +11,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 
 class LoadingViewModel extends ViewModel {
-    MutableLiveData<Chat> chat;
-    MutableLiveData<String> title;
+    final MutableLiveData<Chat> chat;
+    final MutableLiveData<String> title;
 
     LoadingViewModel() {
         chat = new MutableLiveData<>();

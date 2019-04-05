@@ -2,9 +2,11 @@ package de.jthedroid.whatsappchatanalyzer;
 
 import java.util.ArrayList;
 
-public class Sender implements bintree.Sortable {
-    String name;
-    ArrayList<Message> messages;
+import de.jthedroid.whatsappchatanalyzer.bintree.Sortable;
+
+public class Sender implements Sortable {
+    final String name;
+    private final ArrayList<Message> messages;
 
     Sender(String s) {
         name = s;
@@ -15,11 +17,11 @@ public class Sender implements bintree.Sortable {
         return name;
     }
 
-    public void addMessage(Message m){
+    void addMessage(Message m) {
         messages.add(m);
     }
 
-    public int getMsgCount(){
+    int getMsgCount() {
         return messages.size();
     }
 

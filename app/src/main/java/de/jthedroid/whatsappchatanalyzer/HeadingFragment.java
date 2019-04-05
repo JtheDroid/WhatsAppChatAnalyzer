@@ -1,11 +1,14 @@
 package de.jthedroid.whatsappchatanalyzer;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import java.util.Objects;
 
 
 public class HeadingFragment extends Fragment {
@@ -27,7 +30,7 @@ public class HeadingFragment extends Fragment {
 
     public static HeadingFragment newInstance(String text, float size) {
         HeadingFragment hf = newInstance(text);
-        hf.getArguments().putFloat(SIZE, size);
+        Objects.requireNonNull(hf.getArguments()).putFloat(SIZE, size);
         return hf;
     }
 
@@ -36,11 +39,14 @@ public class HeadingFragment extends Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             text = getArguments().getString(TEXT);
+            if (getArguments().containsKey(SIZE)) {
+                size = getArguments().getFloat(SIZE);
+            }
         }
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_heading, container, false);
         ((TextView) v.findViewById(R.id.textViewHeading)).setText(text);

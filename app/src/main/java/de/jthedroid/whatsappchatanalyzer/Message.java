@@ -1,5 +1,7 @@
 package de.jthedroid.whatsappchatanalyzer;
 
+import android.support.annotation.NonNull;
+
 import java.text.DateFormat;
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
@@ -7,12 +9,12 @@ import java.util.Date;
 import java.util.Locale;
 
 
-public class Message {
-    private static DateFormat df = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT, Locale.GERMANY);
-    private static SimpleDateFormat sdf = new SimpleDateFormat("M/d/yy, HH:mm");
-    private Date date;
-    private boolean hasSender;
-    private String msg, senderStr;
+class Message {
+    private static final DateFormat df = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT, Locale.GERMANY);
+    private static final SimpleDateFormat sdf = new SimpleDateFormat("M/d/yy, HH:mm");
+    private final Date date;
+    private final boolean hasSender;
+    private final String msg, senderStr;
     private Sender sender = null;
 
     Message(String s, Chat c) {
@@ -40,6 +42,7 @@ public class Message {
     }
 
     @Override
+    @NonNull
     public String toString() {
         return df.format(date) + (hasSender ? "" : " : " + senderStr) + " : " + msg;
     }
