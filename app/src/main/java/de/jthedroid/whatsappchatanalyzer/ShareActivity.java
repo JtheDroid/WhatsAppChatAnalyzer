@@ -15,14 +15,21 @@ public class ShareActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_share);
+        findViewById(R.id.progressBarLoading).setVisibility(View.VISIBLE);
+        findViewById(R.id.textViewLoading).setVisibility(View.VISIBLE);
+
         final LoadingViewModel viewModel = android.arch.lifecycle.ViewModelProviders.of(this).get(LoadingViewModel.class);
         final Observer<Chat> chatObserver = new Observer<Chat>() {
             @Override
             public void onChanged(@Nullable Chat c) {
                 FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+                if (getSupportFragmentManager().findFragmentByTag("headingSender") == null) {
+                    HeadingFragment headingSender = HeadingFragment.newInstance(getString(R.string.sent_messages));
+                    transaction.add(R.id.linearLayoutSender, headingSender, "headingSender");
+                }
                 for (Sender sender : c.sortedSenders) {
                     if (getSupportFragmentManager().findFragmentByTag(sender.toString()) == null) {
-                        SenderFragment sf = SenderFragment.newInstance(sender.name,sender.getMsgCount(),c.getMaxMsgCount());
+                        SenderFragment sf = SenderFragment.newInstance(sender.name, sender.getMsgCount(), c.getMaxMsgCount());
                         transaction.add(R.id.linearLayoutSender, sf, sender.toString());
                     }
                 }
@@ -31,11 +38,16 @@ public class ShareActivity extends AppCompatActivity {
                 findViewById(R.id.textViewLoading).setVisibility(View.GONE);
             }
         };
+        Intent intent = getIntent();
+        String title = intent.getStringExtra(Intent.EXTRA_TEXT);
+        if (title.contains("\"")) {
+            title = title.substring(title.indexOf('"') + 1, title.lastIndexOf('"'));
+        }
+        setTitle(title);
         if (savedInstanceState == null) {
-            Intent intent = getIntent();
+
             //String action = intent.getAction();
             String type = intent.getType();
-
 
             if (type != null) {
                 String uriStr = intent.getParcelableArrayListExtra(Intent.EXTRA_STREAM).get(0).toString();

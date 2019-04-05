@@ -12,37 +12,40 @@ import android.widget.TextView;
 
 public class SenderFragment extends Fragment {
 
+    private static final String NAME = "name", COUNT = "count", MAX_COUNT = "maxCount";
+    private String name;
+    private int count, maxCount;
+
 
     public static SenderFragment newInstance(String name, int count, int countMax) {
         SenderFragment sf = new SenderFragment();
         Bundle b = new Bundle();
-        b.putString("name", name);
-        b.putInt("count", count);
-        b.putInt("maxCount", countMax);
+        b.putString(NAME, name);
+        b.putInt(COUNT, count);
+        b.putInt(MAX_COUNT, countMax);
         sf.setArguments(b);
         return sf;
     }
 
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
-                             @Nullable Bundle savedInstanceState) {
-
-        View v = inflater.inflate(R.layout.sender_fragment, container, false);
-        if (getArguments() != null) {
-            Bundle b = getArguments();
-            ((TextView) v.findViewById(R.id.textView1)).setText(b.getString("name"));
-            ProgressBar progressBar = v.findViewById(R.id.progressBarMsgCount);
-            progressBar.setMax(b.getInt("maxCount"));
-            progressBar.setProgress(b.getInt("count"));
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        Bundle b = getArguments();
+        if (b != null) {
+            name = b.getString(NAME);
+            count = b.getInt(COUNT);
+            maxCount = b.getInt(MAX_COUNT);
         }
-        return v;
     }
 
     @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-
-
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
+        View v = inflater.inflate(R.layout.sender_fragment, container, false);
+        ((TextView) v.findViewById(R.id.textView1)).setText(name);
+        ProgressBar progressBar = v.findViewById(R.id.progressBarMsgCount);
+        progressBar.setMax(maxCount);
+        progressBar.setProgress(count);
+        return v;
     }
-
 }
