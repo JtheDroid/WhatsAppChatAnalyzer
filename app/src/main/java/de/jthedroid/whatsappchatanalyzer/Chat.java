@@ -1,5 +1,7 @@
 package de.jthedroid.whatsappchatanalyzer;
 
+import android.support.annotation.NonNull;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -10,11 +12,11 @@ import de.jthedroid.whatsappchatanalyzer.bintree.BinTree;
 class Chat {
     HashMap<String, Sender> senders = new HashMap<>();
     ArrayList<Sender> sortedSenders;
+    private ArrayList<Message> msgs = new ArrayList<>();
 
     void init(BufferedReader br) throws IOException {
         ArrayList<String> lines = new ArrayList<>();
         ArrayList<String> strings = new ArrayList<>();
-        ArrayList<Message> msgs = new ArrayList<>();
         while (br.ready()) {
             lines.add(br.readLine());
         }
@@ -55,7 +57,12 @@ class Chat {
         return sortedSenders.get(0).getMsgCount();
     }
 
+    int getMsgCount() {
+        return msgs.size();
+    }
+
     @Override
+    @NonNull
     public String toString() {
         StringBuilder s = new StringBuilder();
         for (Sender sender : sortedSenders) {
