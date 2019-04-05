@@ -45,11 +45,17 @@ class Chat {
             Sender sender = (Sender) senderList[i];
             senderTree.addContent(sender);
         }
-        sortedSenders = senderTree.sort();
+        ArrayList<Sender> tempList = senderTree.sort();
+        sortedSenders = new ArrayList<>(tempList);
+        int size = tempList.size();
+        sortedSenders.ensureCapacity(size);
+        for (int i = size-1; i >= 0; i--) {
+            sortedSenders.set(size - 1 - i, tempList.get(i));
+        }
     }
 
-    int getMaxMsgCount(){
-        return sortedSenders.get(sortedSenders.size()-1).getMsgCount();
+    int getMaxMsgCount() {
+        return sortedSenders.get(0).getMsgCount();
     }
 
     @Override

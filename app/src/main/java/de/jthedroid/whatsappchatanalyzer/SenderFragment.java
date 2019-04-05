@@ -13,8 +13,14 @@ import android.widget.TextView;
 public class SenderFragment extends Fragment {
 
 
-    public static SenderFragment newInstance() {
-        return new SenderFragment();
+    public static SenderFragment newInstance(String name, int count, int countMax) {
+        SenderFragment sf = new SenderFragment();
+        Bundle b = new Bundle();
+        b.putString("name", name);
+        b.putInt("count", count);
+        b.putInt("maxCount", countMax);
+        sf.setArguments(b);
+        return sf;
     }
 
     @Override
