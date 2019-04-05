@@ -9,6 +9,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -51,6 +52,8 @@ public class ShareActivity extends AppCompatActivity {
                     findViewById(R.id.progressBarLoading).setVisibility(View.GONE);
                     findViewById(R.id.textViewLoading).setVisibility(View.GONE);
                 } else {
+                    findViewById(R.id.progressBarLoading).setVisibility(View.GONE);
+                    ((TextView) findViewById(R.id.textViewLoading)).setText(R.string.toast_error_loading);
                     Toast.makeText(getApplicationContext(), R.string.toast_error_loading, Toast.LENGTH_LONG).show();
                 }
             }

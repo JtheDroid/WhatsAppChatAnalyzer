@@ -46,18 +46,22 @@ class Chat {
             }
         }
         ArrayList<Sender> senderList = new ArrayList<>(senders.values());
-        BinTree<Sender> senderTree = new BinTree<>(senderList.get(0));
-        for (int i = 1; i < senderList.size(); i++) {
-            Sender sender = senderList.get(i);
-            senderTree.addContent(sender);
+        sortedSenders = new ArrayList<>();
+        if (!senders.isEmpty()) {
+            BinTree<Sender> senderTree = new BinTree<>(senderList.get(0));
+            for (int i = 1; i < senderList.size(); i++) {
+                Sender sender = senderList.get(i);
+                senderTree.addContent(sender);
+            }
+            ArrayList<Sender> tempList = senderTree.sort();
+            sortedSenders = new ArrayList<>(tempList);
+            int size = tempList.size();
+            sortedSenders.ensureCapacity(size);
+            for (int i = size - 1; i >= 0; i--) {
+                sortedSenders.set(size - 1 - i, tempList.get(i));
+            }
         }
-        ArrayList<Sender> tempList = senderTree.sort();
-        sortedSenders = new ArrayList<>(tempList);
-        int size = tempList.size();
-        sortedSenders.ensureCapacity(size);
-        for (int i = size - 1; i >= 0; i--) {
-            sortedSenders.set(size - 1 - i, tempList.get(i));
-        }
+
     }
 
     int getMaxMsgCount() {

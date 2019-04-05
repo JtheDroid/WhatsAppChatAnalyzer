@@ -18,7 +18,11 @@ class ChatLoadingThread extends Thread {
         Chat chat = new Chat();
         try {
             chat.init(br);
-            lvm.setChat(chat);
+            if (chat.sortedSenders.isEmpty()) {
+                lvm.setChat(null);
+            } else {
+                lvm.setChat(chat);
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
