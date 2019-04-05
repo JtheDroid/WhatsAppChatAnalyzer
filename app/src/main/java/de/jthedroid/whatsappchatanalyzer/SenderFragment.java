@@ -10,6 +10,8 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import java.util.Locale;
+
 public class SenderFragment extends Fragment {
 
     private static final String NAME = "name", COUNT = "count", MAX_COUNT = "maxCount";
@@ -42,7 +44,8 @@ public class SenderFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.sender_fragment, container, false);
-        ((TextView) v.findViewById(R.id.textView1)).setText(name);
+        ((TextView) v.findViewById(R.id.textViewName)).setText(name);
+        ((TextView) v.findViewById(R.id.textViewCount)).setText(String.format(Locale.getDefault(),"%d",count));
         ProgressBar progressBar = v.findViewById(R.id.progressBarMsgCount);
         progressBar.setMax(maxCount);
         progressBar.setProgress(count);
