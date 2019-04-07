@@ -44,7 +44,7 @@ public class TimeGraphFragment extends Fragment {
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_time_graph, container, false);
         FrameLayout fl = v.findViewById(R.id.flGraph);
-        fl.addView(new GraphView(getActivity(), graphData));
+        fl.addView(new GraphView(getActivity(), graphData, fl));
         return v;
     }
 
@@ -55,8 +55,9 @@ public class TimeGraphFragment extends Fragment {
         private final Paint p;
         Bitmap bitmap = null;
         GraphViewThread thread;
+        FrameLayout fl;
 
-        GraphView(Context context, GraphData graphData) {
+        GraphView(Context context, GraphData graphData, FrameLayout fl) {
             super(context);
             this.graphData = graphData;
             this.valuesX = graphData.getxData();
@@ -65,6 +66,7 @@ public class TimeGraphFragment extends Fragment {
             display = new Point();
             display.set(500, 250);
             thread = new GraphViewThread();
+            this.fl = fl;
         }
 
         @Override
@@ -73,12 +75,12 @@ public class TimeGraphFragment extends Fragment {
             int w = getWidth();
             int h = getHeight();
             if (bitmap == null || bitmap.getWidth() != w || bitmap.getHeight() != h) {
+                fl.findViewById(R.id.progressBarGraphLoading).setVisibility(VISIBLE);
                 thread.set(w, h);
                 if (!thread.isAlive()) thread.start();
-                p.setTextSize(50);
-                canvas.drawText(getString(R.string.loading), w / 2f, h / 2f, p);
             } else {
                 canvas.drawBitmap(bitmap, 0, 0, null);
+                fl.findViewById(R.id.progressBarGraphLoading).setVisibility(GONE);
             }
         }
 

@@ -35,7 +35,7 @@ public class ShareActivity extends AppCompatActivity {
                         transaction.add(R.id.linearLayoutSender, headingSender, "headingGraph1");
                     }
                     if (getSupportFragmentManager().findFragmentByTag("graphView1") == null) {
-                        TimeGraphFragment tgf = TimeGraphFragment.newInstance(c.getTotalMessagesGraph());       //TODO: import useful data
+                        TimeGraphFragment tgf = TimeGraphFragment.newInstance(c.getTotalMessagesGraph());
                         transaction.add(R.id.linearLayoutSender, tgf, "graphView1");
                     }
                     if (getSupportFragmentManager().findFragmentByTag("headingSender") == null) {
