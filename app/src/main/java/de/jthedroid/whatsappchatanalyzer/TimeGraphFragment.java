@@ -54,7 +54,8 @@ public class TimeGraphFragment extends Fragment {
         final float[] valuesX, valuesY;
         private final Paint p;
         Bitmap bitmap = null;
-        GraphViewThread thread;
+        Thread thread;
+        GraphViewRunnable runnable;
         FrameLayout fl;
 
         GraphView(Context context, GraphData graphData, FrameLayout fl) {
@@ -65,18 +66,19 @@ public class TimeGraphFragment extends Fragment {
             p = new Paint();
             display = new Point();
             display.set(500, 250);
-            thread = new GraphViewThread();
+            runnable = new GraphViewRunnable();
+            thread = new Thread(runnable);
             this.fl = fl;
         }
 
         @Override
-        protected void onDraw(Canvas canvas) {  //TODO: add styling, text etc.
+        protected void onDraw(Canvas canvas) {
             super.onDraw(canvas);
             int w = getWidth();
             int h = getHeight();
             if (bitmap == null || bitmap.getWidth() != w || bitmap.getHeight() != h) {
                 fl.findViewById(R.id.progressBarGraphLoading).setVisibility(VISIBLE);
-                thread.set(w, h);
+                runnable.set(w, h);
                 if (!thread.isAlive()) thread.start();
             } else {
                 canvas.drawBitmap(bitmap, 0, 0, null);
@@ -102,7 +104,7 @@ public class TimeGraphFragment extends Fragment {
             setMeasuredDimension(resolvedW, resolvedH);
         }
 
-        private class GraphViewThread extends Thread {
+        private class GraphViewRunnable implements Runnable {
             int w, h;
 
             void set(int w, int h) {
@@ -111,8 +113,7 @@ public class TimeGraphFragment extends Fragment {
             }
 
             @Override
-            public void run() {
-                super.run();
+            public void run() {  //TODO: add styling, text etc.
                 Bitmap b = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
                 Canvas c = new Canvas(b);
                 p.setColor(Color.RED);

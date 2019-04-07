@@ -18,7 +18,7 @@ class Chat {
 
     final HashMap<String, Sender> senders = new HashMap<>();
     private final ArrayList<Message> messages = new ArrayList<>();
-    ArrayList<Sender> sortedSenders;
+    private ArrayList<Sender> sortedSenders;
     private GraphData totalMessagesGraph, messagesPerDayGraph;
     private boolean valid = true;
 

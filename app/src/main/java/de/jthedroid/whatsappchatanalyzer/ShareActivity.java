@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -26,39 +27,42 @@ public class ShareActivity extends AppCompatActivity {
 
         final LoadingViewModel viewModel = android.arch.lifecycle.ViewModelProviders.of(this).get(LoadingViewModel.class);
         final Observer<Chat> chatObserver = new Observer<Chat>() {
+            private FragmentTransaction transaction;
+
             @Override
             public void onChanged(@Nullable Chat c) {
                 if (c != null) {
-                    FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+                    transaction = getSupportFragmentManager().beginTransaction();
                     String tag = "headingGraph1";
-                    if (getSupportFragmentManager().findFragmentByTag(tag) == null) {
-                        HeadingFragment headingSender = HeadingFragment.newInstance(getString(R.string.total_messages_time));
-                        transaction.add(R.id.linearLayoutSender, headingSender, tag);
+                    if (fragmentIsNew(tag)) {
+                        HeadingFragment heading = HeadingFragment.newInstance(getString(R.string.total_messages_time));
+                        addFragment(heading, tag);
                     }
                     tag = "graphView1";
-                    if (getSupportFragmentManager().findFragmentByTag(tag) == null) {
+                    if (fragmentIsNew(tag)) {
                         TimeGraphFragment tgf = TimeGraphFragment.newInstance(c.getTotalMessagesGraph());
-                        transaction.add(R.id.linearLayoutSender, tgf, tag);
+                        addFragment(tgf, tag);
                     }
                     tag = "headingGraph2";
-                    if (getSupportFragmentManager().findFragmentByTag(tag) == null) {
-                        HeadingFragment headingSender = HeadingFragment.newInstance(getString(R.string.messages_per_day));
-                        transaction.add(R.id.linearLayoutSender, headingSender, tag);
+                    if (fragmentIsNew(tag)) {
+                        HeadingFragment heading = HeadingFragment.newInstance(getString(R.string.messages_per_day));
+                        addFragment(heading, tag);
                     }
                     tag = "graphView2";
-                    if (getSupportFragmentManager().findFragmentByTag(tag) == null) {
+                    if (fragmentIsNew(tag)) {
                         TimeGraphFragment tgf = TimeGraphFragment.newInstance(c.getMessagesPerDayGraph());
-                        transaction.add(R.id.linearLayoutSender, tgf, tag);
+                        addFragment(tgf, tag);
                     }
                     tag = "headingSender";
-                    if (getSupportFragmentManager().findFragmentByTag(tag) == null) {
-                        HeadingFragment headingSender = HeadingFragment.newInstance(String.format(Locale.getDefault(), "%s (%d)", getString(R.string.sent_messages), c.getMsgCount()));
-                        transaction.add(R.id.linearLayoutSender, headingSender, tag);
+                    if (fragmentIsNew(tag)) {
+                        HeadingFragment heading = HeadingFragment.newInstance(String.format(Locale.getDefault(), "%s (%d)", getString(R.string.sent_messages), c.getMsgCount()));
+                        addFragment(heading, tag);
                     }
-                    for (Sender sender : c.sortedSenders) {
-                        if (getSupportFragmentManager().findFragmentByTag(sender.toString()) == null) {
+                    for (Sender sender : c.getSortedSenders()) {
+                        tag = sender.toString();
+                        if (fragmentIsNew(tag)) {
                             SenderFragment sf = SenderFragment.newInstance(sender.name, sender.getMsgCount(), c.getMaxMsgCount());
-                            transaction.add(R.id.linearLayoutSender, sf, sender.toString());
+                            addFragment(sf, tag);
                         }
                     }
                     transaction.commit();
@@ -69,6 +73,14 @@ public class ShareActivity extends AppCompatActivity {
                     findViewById(R.id.textViewLoading).setVisibility(View.VISIBLE);
                     ((TextView) findViewById(R.id.textViewLoading)).setText(R.string.error_loading);
                 }
+            }
+
+            private boolean fragmentIsNew(String tag) {
+                return getSupportFragmentManager().findFragmentByTag(tag) == null;
+            }
+
+            private void addFragment(Fragment f, String tag) {
+                transaction.add(R.id.linearLayoutSender, f, tag);
             }
         };
         Intent intent = getIntent();
