@@ -5,6 +5,8 @@
     <string name="open_whatsapp">WhatsApp öffnen</string>
     <string name="whatsapp_open_error">WhatsApp konnte nicht geöffnet werden</string>
     <string name="loading">Wird geladen…</string>
+    <string name="opening_file">Datei wird geöffnet…</string>
+    <string name="processing">Wird verarbeitet…</string>
     <string name="sent_messages">Gesendete Nachrichten</string>
     <string name="error_loading">Fehler beim Laden</string>
     <string name="toast_faulty_data">Geteilte Daten könne nicht genutzt werden</string>

@@ -83,6 +83,25 @@ public class ShareActivity extends AppCompatActivity {
                 transaction.add(R.id.linearLayoutSender, f, tag);
             }
         };
+        final Observer<Integer> loadingStageObserver = new Observer<Integer>() {
+            @Override
+            public void onChanged(@Nullable Integer integer) {
+                if (integer != null) {
+                    TextView textView = findViewById(R.id.textViewLoading);
+                    switch (integer) {
+                        case LoadingViewModel.OPENING_FILE:
+                            textView.setText(R.string.opening_file);
+                            break;
+                        case LoadingViewModel.LOADING_FILE:
+                            textView.setText(R.string.loading);
+                            break;
+                        case LoadingViewModel.PROCESSING:
+                            textView.setText(R.string.processing);
+                            break;
+                    }
+                }
+            }
+        };
         Intent intent = getIntent();
         if (savedInstanceState == null) {
 
@@ -111,12 +130,14 @@ public class ShareActivity extends AppCompatActivity {
                 }
                 viewModel.load(getContentResolver(), uri);
                 viewModel.chat.observe(this, chatObserver);
+                viewModel.loadingStage.observe(this, loadingStageObserver);
             }
         } else {
             //load title
             setTitle(viewModel.title.getValue());
             //load data from Chat
             chatObserver.onChanged(viewModel.chat.getValue());
+            loadingStageObserver.onChanged(viewModel.loadingStage.getValue());
         }
     }
 }

@@ -22,12 +22,13 @@ class Chat {
     private GraphData totalMessagesGraph, messagesPerDayGraph;
     private boolean valid = true;
 
-    void init(BufferedReader br) throws IOException {
+    void init(BufferedReader br, LoadingViewModel lvm) throws IOException {
         ArrayList<String> lines = readLines(br);
         ArrayList<String> strings = createMessageStrings(lines);
         if (!valid) {
             return;
         }
+        lvm.loadingStage.postValue(LoadingViewModel.PROCESSING);
         addMessages(strings);
         if (messages.isEmpty()) {
             valid = false;
