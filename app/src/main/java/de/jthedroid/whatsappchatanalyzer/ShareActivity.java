@@ -53,8 +53,8 @@ public class ShareActivity extends AppCompatActivity {
                     findViewById(R.id.textViewLoading).setVisibility(View.GONE);
                 } else {
                     findViewById(R.id.progressBarLoading).setVisibility(View.GONE);
-                    ((TextView) findViewById(R.id.textViewLoading)).setText(R.string.toast_error_loading);
-                    Toast.makeText(getApplicationContext(), R.string.toast_error_loading, Toast.LENGTH_LONG).show();
+                    findViewById(R.id.textViewLoading).setVisibility(View.VISIBLE);
+                    ((TextView) findViewById(R.id.textViewLoading)).setText(R.string.error_loading);
                 }
             }
         };

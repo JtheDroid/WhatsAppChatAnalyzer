@@ -12,7 +12,7 @@ import java.util.HashMap;
 import de.jthedroid.whatsappchatanalyzer.bintree.BinTree;
 
 class Chat {
-    private static final int MAX_GRAPH_POINTS = 500;
+    private static final int MAX_GRAPH_POINTS = 10000;
 
     final HashMap<String, Sender> senders = new HashMap<>();
     private final ArrayList<Message> messages = new ArrayList<>();

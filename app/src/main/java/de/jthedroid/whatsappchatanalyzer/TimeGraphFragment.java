@@ -1,6 +1,7 @@
 package de.jthedroid.whatsappchatanalyzer;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -52,6 +53,8 @@ public class TimeGraphFragment extends Fragment {
         final GraphData graphData;
         final float[] valuesX, valuesY;
         private final Paint p;
+        Bitmap bitmap = null;
+        GraphViewThread thread;
 
         GraphView(Context context, GraphData graphData) {
             super(context);
@@ -61,6 +64,7 @@ public class TimeGraphFragment extends Fragment {
             p = new Paint();
             display = new Point();
             display.set(500, 250);
+            thread = new GraphViewThread();
         }
 
         @Override
@@ -68,17 +72,13 @@ public class TimeGraphFragment extends Fragment {
             super.onDraw(canvas);
             int w = getWidth();
             int h = getHeight();
-            p.setColor(Color.RED);
-            p.setStrokeWidth(3);
-            if (valuesX.length != valuesY.length) {
-                Log.e("GraphView onDraw", "value arrays are not the same size!");
-                return;
-            }
-            int fromX = 50, toX = w - 50;
-            int fromY = h - 50, toY = 50;
-            float lastX = map(valuesX[0], fromX, toX), lastY = map(valuesY[0], fromY, toY);
-            for (int i = 1; i < valuesX.length; i++) {
-                canvas.drawLine(lastX, lastY, lastX = map(valuesX[i], fromX, toX), lastY = map(valuesY[i], fromY, toY), p);
+            if (bitmap == null || bitmap.getWidth() != w || bitmap.getHeight() != h) {
+                thread.set(w, h);
+                if (!thread.isAlive()) thread.start();
+                p.setTextSize(50);
+                canvas.drawText(getString(R.string.loading), w / 2f, h / 2f, p);
+            } else {
+                canvas.drawBitmap(bitmap, 0, 0, null);
             }
         }
 
@@ -99,5 +99,36 @@ public class TimeGraphFragment extends Fragment {
 //            Log.v("[GraphView] resolved h", Integer.toString(resolvedH));
             setMeasuredDimension(resolvedW, resolvedH);
         }
+
+        private class GraphViewThread extends Thread {
+            int w, h;
+
+            void set(int w, int h) {
+                this.w = w;
+                this.h = h;
+            }
+
+            @Override
+            public void run() {
+                super.run();
+                Bitmap b = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
+                Canvas c = new Canvas(b);
+                p.setColor(Color.RED);
+                p.setStrokeWidth(3);
+                if (valuesX.length != valuesY.length) {
+                    Log.e("GraphView onDraw", "value arrays are not the same size!");
+                    return;
+                }
+                int fromX = 50, toX = w - 50;
+                int fromY = h - 50, toY = 50;
+                float lastX = map(valuesX[0], fromX, toX), lastY = map(valuesY[0], fromY, toY);
+                for (int i = 1; i < valuesX.length; i++) {
+                    c.drawLine(lastX, lastY, lastX = map(valuesX[i], fromX, toX), lastY = map(valuesY[i], fromY, toY), p);
+                }
+                bitmap = b;
+                postInvalidate();
+            }
+        }
     }
+
 }

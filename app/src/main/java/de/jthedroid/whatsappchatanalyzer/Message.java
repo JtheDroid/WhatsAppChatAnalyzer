@@ -51,7 +51,7 @@ class Message {
         return df.format(date) + (hasSender ? "" : " : " + senderStr) + " : " + msg;
     }
 
-    public Date getDate() {
+    Date getDate() {
         return date;
     }
 
