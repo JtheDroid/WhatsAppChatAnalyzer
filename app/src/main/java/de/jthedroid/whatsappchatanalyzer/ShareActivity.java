@@ -30,17 +30,30 @@ public class ShareActivity extends AppCompatActivity {
             public void onChanged(@Nullable Chat c) {
                 if (c != null) {
                     FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-                    if (getSupportFragmentManager().findFragmentByTag("headingGraph1") == null) {
+                    String tag = "headingGraph1";
+                    if (getSupportFragmentManager().findFragmentByTag(tag) == null) {
                         HeadingFragment headingSender = HeadingFragment.newInstance(getString(R.string.total_messages_time));
-                        transaction.add(R.id.linearLayoutSender, headingSender, "headingGraph1");
+                        transaction.add(R.id.linearLayoutSender, headingSender, tag);
                     }
-                    if (getSupportFragmentManager().findFragmentByTag("graphView1") == null) {
+                    tag = "graphView1";
+                    if (getSupportFragmentManager().findFragmentByTag(tag) == null) {
                         TimeGraphFragment tgf = TimeGraphFragment.newInstance(c.getTotalMessagesGraph());
-                        transaction.add(R.id.linearLayoutSender, tgf, "graphView1");
+                        transaction.add(R.id.linearLayoutSender, tgf, tag);
                     }
-                    if (getSupportFragmentManager().findFragmentByTag("headingSender") == null) {
+                    tag = "headingGraph2";
+                    if (getSupportFragmentManager().findFragmentByTag(tag) == null) {
+                        HeadingFragment headingSender = HeadingFragment.newInstance(getString(R.string.messages_per_day));
+                        transaction.add(R.id.linearLayoutSender, headingSender, tag);
+                    }
+                    tag = "graphView2";
+                    if (getSupportFragmentManager().findFragmentByTag(tag) == null) {
+                        TimeGraphFragment tgf = TimeGraphFragment.newInstance(c.getMessagesPerDayGraph());
+                        transaction.add(R.id.linearLayoutSender, tgf, tag);
+                    }
+                    tag = "headingSender";
+                    if (getSupportFragmentManager().findFragmentByTag(tag) == null) {
                         HeadingFragment headingSender = HeadingFragment.newInstance(String.format(Locale.getDefault(), "%s (%d)", getString(R.string.sent_messages), c.getMsgCount()));
-                        transaction.add(R.id.linearLayoutSender, headingSender, "headingSender");
+                        transaction.add(R.id.linearLayoutSender, headingSender, tag);
                     }
                     for (Sender sender : c.sortedSenders) {
                         if (getSupportFragmentManager().findFragmentByTag(sender.toString()) == null) {

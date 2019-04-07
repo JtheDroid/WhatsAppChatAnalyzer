@@ -2,11 +2,13 @@ package de.jthedroid.whatsappchatanalyzer;
 
 import android.support.annotation.NonNull;
 import android.util.Log;
+import android.util.LongSparseArray;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 
 import de.jthedroid.whatsappchatanalyzer.bintree.BinTree;
@@ -17,7 +19,7 @@ class Chat {
     final HashMap<String, Sender> senders = new HashMap<>();
     private final ArrayList<Message> messages = new ArrayList<>();
     ArrayList<Sender> sortedSenders;
-    private GraphData totalMessagesGraph;
+    private GraphData totalMessagesGraph, messagesPerDayGraph;
     private boolean valid = true;
 
     void init(BufferedReader br) throws IOException {
@@ -37,6 +39,7 @@ class Chat {
             return;
         }
         totalMessagesGraph = createTotalMessagesGraph();
+        messagesPerDayGraph = createMessagesPerDayGraph();
     }
 
     private ArrayList<String> readLines(@NonNull BufferedReader br) throws IOException {
@@ -132,12 +135,43 @@ class Chat {
         return gD;
     }
 
+    private GraphData createMessagesPerDayGraph() {
+        float[] xData, yData;
+        int msgCount = messages.size();
+        if (msgCount == 0) return null;
+        Calendar calendar = Calendar.getInstance();
+        LongSparseArray<Integer> dayCounts = new LongSparseArray<>();
+        for (Message m : messages) {
+            calendar.setTime(m.getDate());
+            calendar.set(Calendar.HOUR_OF_DAY, 0);
+            calendar.set(Calendar.MINUTE, 0);
+            calendar.set(Calendar.SECOND, 0);
+            calendar.set(Calendar.MILLISECOND, 0);
+            long millis = calendar.getTimeInMillis();
+            int count = dayCounts.get(millis, 0);
+            dayCounts.put(millis, count + 1);
+        }
+        xData = new float[dayCounts.size()];
+        yData = new float[dayCounts.size()];
+        for (int i = 0; i < dayCounts.size(); i++) {
+            xData[i] = dayCounts.keyAt(i);
+            yData[i] = dayCounts.valueAt(i);
+        }
+        GraphData gD = new GraphData(xData, yData);
+        gD.scale();
+        return gD;
+    }
+
     ArrayList<Sender> getSortedSenders() {
         return sortedSenders;
     }
 
     GraphData getTotalMessagesGraph() {
         return totalMessagesGraph;
+    }
+
+    GraphData getMessagesPerDayGraph() {
+        return messagesPerDayGraph;
     }
 
     int getMaxMsgCount() {
