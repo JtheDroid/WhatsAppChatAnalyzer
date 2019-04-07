@@ -31,11 +31,11 @@ public class ShareActivity extends AppCompatActivity {
                 if (c != null) {
                     FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
                     if (getSupportFragmentManager().findFragmentByTag("headingGraph1") == null) {
-                        HeadingFragment headingSender = HeadingFragment.newInstance("Graph 1");
+                        HeadingFragment headingSender = HeadingFragment.newInstance(getString(R.string.total_messages_time));
                         transaction.add(R.id.linearLayoutSender, headingSender, "headingGraph1");
                     }
                     if (getSupportFragmentManager().findFragmentByTag("graphView1") == null) {
-                        TimeGraphFragment tgf = TimeGraphFragment.newInstance(new float[]{0f, 0.5f, 1f}, new float[]{0f, 0.75f, 0f});       //TODO: import useful data
+                        TimeGraphFragment tgf = TimeGraphFragment.newInstance(c.getTotalMessagesGraph());       //TODO: import useful data
                         transaction.add(R.id.linearLayoutSender, tgf, "graphView1");
                     }
                     if (getSupportFragmentManager().findFragmentByTag("headingSender") == null) {

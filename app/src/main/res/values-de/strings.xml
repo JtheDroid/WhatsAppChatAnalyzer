@@ -9,4 +9,5 @@
     <string name="toast_error_loading">Fehler beim Laden</string>
     <string name="toast_faulty_data">Geteilte Daten könne nicht genutzt werden</string>
     <string name="open_exported_txt">.txt-Datei öffnen</string>
+    <string name="total_messages_time">Nachrichten über Zeit (insgesamt)</string>
 </resources>

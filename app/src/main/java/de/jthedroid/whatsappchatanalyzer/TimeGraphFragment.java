@@ -16,17 +16,16 @@ import android.widget.FrameLayout;
 
 
 public class TimeGraphFragment extends Fragment {
-    private static final String VALUES_X = "valuesX", VALUES_Y = "valuesY";
-    private float[] valuesX, valuesY;
+    private static final String GRAPH_DATA = "graphData";
+    private GraphData graphData;
 
     public TimeGraphFragment() {
     }
 
-    public static TimeGraphFragment newInstance(float[] valuesX, float[] valuesY) {
+    public static TimeGraphFragment newInstance(GraphData graphData) {
         TimeGraphFragment fragment = new TimeGraphFragment();
         Bundle args = new Bundle();
-        args.putFloatArray(VALUES_X, valuesX);
-        args.putFloatArray(VALUES_Y, valuesY);
+        args.putParcelable(GRAPH_DATA, graphData);
         fragment.setArguments(args);
         return fragment;
     }
@@ -35,8 +34,7 @@ public class TimeGraphFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            valuesX = getArguments().getFloatArray(VALUES_X);
-            valuesY = getArguments().getFloatArray(VALUES_Y);
+            graphData = getArguments().getParcelable(GRAPH_DATA);
         }
     }
 
@@ -45,19 +43,21 @@ public class TimeGraphFragment extends Fragment {
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_time_graph, container, false);
         FrameLayout fl = v.findViewById(R.id.flGraph);
-        fl.addView(new GraphView(getActivity(), valuesX, valuesY));
+        fl.addView(new GraphView(getActivity(), graphData));
         return v;
     }
 
-    private class GraphView extends View {
+    private class GraphView extends View {  //TODO: add touch interaction: (scrolling, zooming?), displaying data points
         final Point display;
+        final GraphData graphData;
         final float[] valuesX, valuesY;
         private final Paint p;
 
-        GraphView(Context context, float[] valuesX, float[] valuesY) {
+        GraphView(Context context, GraphData graphData) {
             super(context);
-            this.valuesX = valuesX;
-            this.valuesY = valuesY;
+            this.graphData = graphData;
+            this.valuesX = graphData.getxData();
+            this.valuesY = graphData.getyData();
             p = new Paint();
             display = new Point();
             display.set(500, 250);
@@ -69,6 +69,7 @@ public class TimeGraphFragment extends Fragment {
             int w = getWidth();
             int h = getHeight();
             p.setColor(Color.RED);
+            p.setStrokeWidth(3);
             if (valuesX.length != valuesY.length) {
                 Log.e("GraphView onDraw", "value arrays are not the same size!");
                 return;

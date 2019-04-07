@@ -8,4 +8,5 @@
     <string name="toast_error_loading">Error while loading</string>
     <string name="toast_faulty_data">Can\'t handle shared data</string>
     <string name="open_exported_txt">Open .txt file</string>
+    <string name="total_messages_time">Total messages over time</string>
 </resources>
