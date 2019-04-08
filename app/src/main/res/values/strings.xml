@@ -2,7 +2,6 @@
     <string name="app_name">WhatsApp Chat Analyzer</string>
     <string name="whatsapp_info">To start, open WhatsApp, select a chat, open the menu, tap on More, then Export Chat, choose Without Media and select this app</string>
     <string name="open_whatsapp">Open WhatsApp</string>
-    <string name="whatsapp_open_error">Couldn\'t open WhatsApp</string>
     <string name="loading">Loading…</string>
     <string name="opening_file">Opening file…</string>
     <string name="processing">Processing…</string>
@@ -12,4 +11,6 @@
     <string name="open_exported_txt">Open .txt file</string>
     <string name="total_messages_time">Total messages over time</string>
     <string name="messages_per_day">Messages per day</string>
+    <string name="preference_file_key" translatable="false">de.jthedroid.whatsappchatanalyzer.PREFERENCE_FILE_KEY</string>
+    <string name="preference_key_theme" translatable="false">dark_theme_enabled</string>
 </resources>

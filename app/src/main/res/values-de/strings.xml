@@ -3,7 +3,6 @@
     <string name="app_name">WhatsApp Chat Analyzer</string>
     <string name="whatsapp_info">Zum Analysieren eines Chats:\nWhatsApp öffnen, Chat auswählen\nMenü öffnen, Mehr auswählen, Chat exportieren\nOhne Medien, diese App auswählen</string>
     <string name="open_whatsapp">WhatsApp öffnen</string>
-    <string name="whatsapp_open_error">WhatsApp konnte nicht geöffnet werden</string>
     <string name="loading">Wird geladen…</string>
     <string name="opening_file">Datei wird geöffnet…</string>
     <string name="processing">Wird verarbeitet…</string>
