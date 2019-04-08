@@ -11,9 +11,12 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+
+import java.util.Date;
 
 
 public class TimeGraphFragment extends Fragment {
@@ -57,12 +60,18 @@ public class TimeGraphFragment extends Fragment {
         Thread thread;
         GraphViewRunnable runnable;
         FrameLayout fl;
+        float lastW, lastH;
+        float x, y;
+        boolean showTap = false;
+        int highlightIndex;
+        float padding = 50;
+        Date d = new Date();
 
         GraphView(Context context, GraphData graphData, FrameLayout fl) {
             super(context);
             this.graphData = graphData;
-            this.valuesX = graphData.getxData();
-            this.valuesY = graphData.getyData();
+            this.valuesX = graphData.getXData();
+            this.valuesY = graphData.getYData();
             p = new Paint();
             display = new Point();
             display.set(500, 250);
@@ -84,11 +93,70 @@ public class TimeGraphFragment extends Fragment {
                 canvas.drawBitmap(bitmap, 0, 0, null);
                 fl.findViewById(R.id.progressBarGraphLoading).setVisibility(GONE);
             }
+            if (showTap) {
+                p.setColor(Color.argb(100, 150, 150, 150));
+                canvas.drawLine(x, padding, x, h - padding, p);
+                float yHighlight = map(valuesY[highlightIndex], h - padding, padding);
+                float xHighlight = map(valuesX[highlightIndex], padding, w - padding);
+                canvas.drawLine(padding, yHighlight, w - padding, yHighlight, p);
+                p.setColor(Color.BLACK);
+                canvas.drawCircle(xHighlight, yHighlight, 5, p);
+                p.setTextAlign(Paint.Align.CENTER);
+                p.setTextSize(30);
+                d.setTime((long) graphData.getRawXData()[highlightIndex]);
+                canvas.drawText(d.toString(), w / 2f, h - padding / 2, p);
+                canvas.drawText("" + graphData.getRawYData()[highlightIndex], xHighlight, yHighlight - padding / 4, p);
+            }
+            lastW = w;
+            lastH = h;
+        }
+
+        @Override
+        public boolean onTouchEvent(MotionEvent event) {
+            showTap = true;
+            x = event.getX();
+            y = event.getY();
+            highlightIndex = findNearestIndex(valuesX, unmap(x, padding, lastW - padding));
+            invalidate();
+            return performClick();
+        }
+
+        @Override
+        public boolean performClick() {
+            return super.performClick();
         }
 
         private float map(float val, float from, float to) {
             return from + (to - from) * val;
         }
+
+        private float unmap(float val, float from, float to) {
+            return (val - from) / (to - from);
+        }
+
+        private int findNearestIndex(float[] arr, float val) {  //TODO: improve performance (binary search?), linear is really inefficient
+            if (arr.length == 0) return -1;
+            float minDiff = diff(arr[0], val);
+            int index = 0;
+            for (int i = 1; i < arr.length; i++) {
+                float diff = diff(arr[i], val);
+                if (diff < minDiff) {
+                    minDiff = diff;
+                    index = i;
+                }
+            }
+            return index;
+        }
+
+        private float diff(float f1, float f2) {
+            return f1 > f2 ? f1 - f2 : f2 - f1;
+        }
+
+        /*
+        from + (to - from) * val = newV     // - from
+        val * (to - from) = newV - from     // /(to-from)
+        val = (newV - from) / (to - from)
+         */
 
         @Override
         protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
@@ -114,16 +182,16 @@ public class TimeGraphFragment extends Fragment {
 
             @Override
             public void run() {  //TODO: add styling, text etc.
-                Bitmap b = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
-                Canvas c = new Canvas(b);
-                p.setColor(Color.RED);
-                p.setStrokeWidth(3);
                 if (valuesX.length != valuesY.length) {
                     Log.e("GraphView onDraw", "value arrays are not the same size!");
                     return;
                 }
-                int fromX = 50, toX = w - 50;
-                int fromY = h - 50, toY = 50;
+                Bitmap b = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
+                Canvas c = new Canvas(b);
+                p.setColor(Color.RED);
+                p.setStrokeWidth(3);
+                float fromX = padding, toX = w - padding;
+                float fromY = h - padding, toY = padding;
                 float lastX = map(valuesX[0], fromX, toX), lastY = map(valuesY[0], fromY, toY);
                 for (int i = 1; i < valuesX.length; i++) {
                     c.drawLine(lastX, lastY, lastX = map(valuesX[i], fromX, toX), lastY = map(valuesY[i], fromY, toY), p);

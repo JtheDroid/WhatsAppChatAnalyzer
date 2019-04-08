@@ -14,16 +14,21 @@ public class GraphData implements Parcelable {    //TODO: more data
             return new GraphData[size];
         }
     };
+    private float[] rawXData, rawYData;
     private float[] xData, yData;
 
+
     private GraphData(Parcel parcel) {
+        rawXData = parcel.createFloatArray();
+        rawYData = parcel.createFloatArray();
         xData = parcel.createFloatArray();
         yData = parcel.createFloatArray();
     }
 
-    GraphData(float[] xData, float[] yData) {
-        this.xData = xData;
-        this.yData = yData;
+    GraphData(float[] rawXData, float[] rawYData) {
+        this.rawXData = rawXData;
+        this.rawYData = rawYData;
+        scale();
     }
 
     //Parcelable
@@ -34,6 +39,8 @@ public class GraphData implements Parcelable {    //TODO: more data
 
     @Override
     public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeFloatArray(rawXData);
+        parcel.writeFloatArray(rawYData);
         parcel.writeFloatArray(xData);
         parcel.writeFloatArray(yData);
     }
@@ -42,20 +49,22 @@ public class GraphData implements Parcelable {    //TODO: more data
      * Scales x- and y-values to range [0,1]
      */
     void scale() {
-        if (xData.length == 0) return;
+        if (rawXData.length == 0) return;
         float minX, maxX, minY, maxY;
-        minX = maxX = xData[0];
-        minY = maxY = yData[0];
-        for (int i = 1; i < xData.length; i++) {
-            float x = xData[i], y = yData[i];
+        minX = maxX = rawXData[0];
+        minY = maxY = rawYData[0];
+        for (int i = 1; i < rawXData.length; i++) {
+            float x = rawXData[i], y = rawYData[i];
             if (x < minX) minX = x;
             else if (x > maxX) maxX = x;
             if (y < minY) minY = y;
             else if (y > maxY) maxY = y;
         }
+        xData = new float[rawXData.length];
+        yData = new float[rawYData.length];
         for (int i = 0; i < xData.length; i++) {
-            xData[i] = map(xData[i], minX, maxX);
-            yData[i] = map(yData[i], minY, maxY);
+            xData[i] = map(rawXData[i], minX, maxX);
+            yData[i] = map(rawYData[i], minY, maxY);
         }
     }
 
@@ -64,11 +73,19 @@ public class GraphData implements Parcelable {    //TODO: more data
         return (val - min) / (max - min);
     }
 
-    float[] getxData() {
+    float[] getXData() {
         return xData;
     }
 
-    float[] getyData() {
+    float[] getYData() {
         return yData;
+    }
+
+    float[] getRawXData() {
+        return rawXData;
+    }
+
+    float[] getRawYData() {
+        return rawYData;
     }
 }
