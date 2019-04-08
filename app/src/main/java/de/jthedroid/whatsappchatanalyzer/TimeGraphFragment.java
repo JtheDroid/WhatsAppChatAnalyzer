@@ -63,6 +63,7 @@ public class TimeGraphFragment extends Fragment {
         boolean showTap = false;
         int highlightIndex;
         float padding = 50;
+        boolean darkTheme;
 
         GraphView(Context context, GraphData graphData, FrameLayout fl) {
             super(context);
@@ -75,6 +76,7 @@ public class TimeGraphFragment extends Fragment {
             runnable = new GraphViewRunnable();
             thread = new Thread(runnable);
             this.fl = fl;
+            darkTheme = getContext().getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE).getBoolean(getString(R.string.preference_key_theme), false);
         }
 
         @Override
@@ -85,18 +87,19 @@ public class TimeGraphFragment extends Fragment {
             if (bitmap == null || bitmap.getWidth() != w || bitmap.getHeight() != h) {
                 fl.findViewById(R.id.progressBarGraphLoading).setVisibility(VISIBLE);
                 runnable.set(w, h);
-                if (!thread.isAlive()) thread.start();
+                if (!runnable.running && !thread.isAlive()) thread.start();
             } else {
                 canvas.drawBitmap(bitmap, 0, 0, null);
                 fl.findViewById(R.id.progressBarGraphLoading).setVisibility(GONE);
             }
             if (showTap) {
-                p.setColor(Color.argb(100, 150, 150, 150));
+                if (darkTheme) p.setColor(Color.argb(50, 255, 255, 255));
+                else p.setColor(Color.argb(50, 0, 0, 0));
                 canvas.drawLine(x, padding, x, h - padding, p);
                 float yHighlight = map(valuesY[highlightIndex], h - padding, padding);
                 float xHighlight = map(valuesX[highlightIndex], padding, w - padding);
                 canvas.drawLine(padding, yHighlight, w - padding, yHighlight, p);
-                p.setColor(Color.BLACK);
+                p.setColor(darkTheme ? Color.WHITE : Color.BLACK);
                 canvas.drawCircle(xHighlight, yHighlight, 5, p);
                 p.setTextAlign(Paint.Align.CENTER);
                 p.setTextSize(30);
@@ -170,6 +173,7 @@ public class TimeGraphFragment extends Fragment {
 
         private class GraphViewRunnable implements Runnable {
             int w, h;
+            boolean running = false;
 
             void set(int w, int h) {
                 this.w = w;
@@ -178,6 +182,7 @@ public class TimeGraphFragment extends Fragment {
 
             @Override
             public void run() {  //TODO: add styling, text etc.
+                running = true;
                 if (valuesX.length != valuesY.length) {
                     Log.e("GraphView onDraw", "value arrays are not the same size!");
                     return;
@@ -194,6 +199,7 @@ public class TimeGraphFragment extends Fragment {
                 }
                 bitmap = b;
                 postInvalidate();
+                running = false;
             }
         }
     }

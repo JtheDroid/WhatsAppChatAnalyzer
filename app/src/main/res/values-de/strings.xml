@@ -12,4 +12,6 @@
     <string name="open_exported_txt">.txt-Datei öffnen</string>
     <string name="total_messages_time">Nachrichten über Zeit (insgesamt)</string>
     <string name="messages_per_day">Nachrichten pro Tag</string>
+    <string name="switch_theme_light">Helles Design nutzen</string>
+    <string name="switch_theme_dark">Dunkles Design nutzen</string>
 </resources>

@@ -8,7 +8,6 @@ import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -16,7 +15,7 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.Locale;
 
-public class ShareActivity extends AppCompatActivity {
+public class ShareActivity extends ThemeMenuActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
