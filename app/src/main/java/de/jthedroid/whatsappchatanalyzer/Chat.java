@@ -6,9 +6,11 @@ import android.util.LongSparseArray;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 
 import de.jthedroid.whatsappchatanalyzer.bintree.BinTree;
@@ -126,25 +128,28 @@ class Chat {
             yData = new float[MAX_GRAPH_POINTS];
             step = msgCount / MAX_GRAPH_POINTS;
         }
+        String[] xDesc = new String[xData.length], yDesc = new String[yData.length];
+        DateFormat df = DateFormat.getDateTimeInstance();
         for (int i = 0; i < xData.length; i++) {
             Message msg = messages.get(i * step);
             xData[i] = msg.getDate().getTime(); //timecode
+            xDesc[i] = df.format(msg.getDate());
             yData[i] = i * step;  //total messages at this point
+            yDesc[i] = "" + yData[i];
         }
-        GraphData gD = new GraphData(xData, yData);
+        GraphData gD = new GraphData(xData, yData, xDesc, yDesc);
         gD.scale();
         return gD;
     }
 
     private GraphData createMessagesPerDayGraph() {
-        float[] xData, yData;
         int msgCount = messages.size();
         if (msgCount == 0) return null;
         Calendar calendar = Calendar.getInstance();
         LongSparseArray<Integer> dayCounts = new LongSparseArray<>();
         for (Message m : messages) {
             calendar.setTime(m.getDate());
-            calendar.set(Calendar.HOUR_OF_DAY, 0);
+            calendar.set(Calendar.HOUR_OF_DAY, 12);
             calendar.set(Calendar.MINUTE, 0);
             calendar.set(Calendar.SECOND, 0);
             calendar.set(Calendar.MILLISECOND, 0);
@@ -152,13 +157,22 @@ class Chat {
             int count = dayCounts.get(millis, 0);
             dayCounts.put(millis, count + 1);
         }
-        xData = new float[dayCounts.size()];
-        yData = new float[dayCounts.size()];
+        float[] xData = new float[dayCounts.size()],
+                yData = new float[dayCounts.size()];
+        String[] xDesc = new String[dayCounts.size()],
+                yDesc = new String[dayCounts.size()];
+        DateFormat df = DateFormat.getDateInstance();
+        Date d = new Date();
         for (int i = 0; i < dayCounts.size(); i++) {
-            xData[i] = dayCounts.keyAt(i);
-            yData[i] = dayCounts.valueAt(i);
+            long time = dayCounts.keyAt(i);
+            d.setTime(time);
+            xData[i] = time;  //timecode
+            xDesc[i] = df.format(d);    //day
+            int messageCount = dayCounts.valueAt(i);
+            yData[i] = messageCount; //messages per day
+            yDesc[i] = "" + messageCount; //messages per day
         }
-        GraphData gD = new GraphData(xData, yData);
+        GraphData gD = new GraphData(xData, yData, xDesc, yDesc);
         gD.scale();
         return gD;
     }

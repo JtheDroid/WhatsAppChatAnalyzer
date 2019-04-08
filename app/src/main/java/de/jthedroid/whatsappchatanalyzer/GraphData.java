@@ -16,6 +16,7 @@ public class GraphData implements Parcelable {    //TODO: more data
     };
     private float[] rawXData, rawYData;
     private float[] xData, yData;
+    private String[] xDesc, yDesc;
 
 
     private GraphData(Parcel parcel) {
@@ -23,11 +24,15 @@ public class GraphData implements Parcelable {    //TODO: more data
         rawYData = parcel.createFloatArray();
         xData = parcel.createFloatArray();
         yData = parcel.createFloatArray();
+        xDesc = parcel.createStringArray();
+        yDesc = parcel.createStringArray();
     }
 
-    GraphData(float[] rawXData, float[] rawYData) {
+    GraphData(float[] rawXData, float[] rawYData, String[] xDesc, String[] yDesc) {
         this.rawXData = rawXData;
         this.rawYData = rawYData;
+        this.xDesc = xDesc;
+        this.yDesc = yDesc;
         scale();
     }
 
@@ -43,6 +48,8 @@ public class GraphData implements Parcelable {    //TODO: more data
         parcel.writeFloatArray(rawYData);
         parcel.writeFloatArray(xData);
         parcel.writeFloatArray(yData);
+        parcel.writeStringArray(xDesc);
+        parcel.writeStringArray(yDesc);
     }
 
     /**
@@ -87,5 +94,13 @@ public class GraphData implements Parcelable {    //TODO: more data
 
     float[] getRawYData() {
         return rawYData;
+    }
+
+    String[] getXDesc() {
+        return xDesc;
+    }
+
+    String[] getYDesc() {
+        return yDesc;
     }
 }

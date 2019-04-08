@@ -16,8 +16,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
-import java.util.Date;
-
 
 public class TimeGraphFragment extends Fragment {
     private static final String GRAPH_DATA = "graphData";
@@ -65,7 +63,6 @@ public class TimeGraphFragment extends Fragment {
         boolean showTap = false;
         int highlightIndex;
         float padding = 50;
-        Date d = new Date();
 
         GraphView(Context context, GraphData graphData, FrameLayout fl) {
             super(context);
@@ -103,9 +100,8 @@ public class TimeGraphFragment extends Fragment {
                 canvas.drawCircle(xHighlight, yHighlight, 5, p);
                 p.setTextAlign(Paint.Align.CENTER);
                 p.setTextSize(30);
-                d.setTime((long) graphData.getRawXData()[highlightIndex]);
-                canvas.drawText(d.toString(), w / 2f, h - padding / 2, p);
-                canvas.drawText("" + graphData.getRawYData()[highlightIndex], xHighlight, yHighlight - padding / 4, p);
+                canvas.drawText(graphData.getXDesc()[highlightIndex], w / 2f, h - padding / 2, p);  //TODO: move with x?
+                canvas.drawText(graphData.getYDesc()[highlightIndex], xHighlight, yHighlight - padding / 4, p);
             }
             lastW = w;
             lastH = h;
