@@ -6,7 +6,7 @@ import android.content.ContentResolver;
 import android.net.Uri;
 
 class LoadingViewModel extends ViewModel {
-    static final int OPENING_FILE = 0, LOADING_FILE = 1, PROCESSING = 2;
+    static final int OPENING_FILE = 0, LOADING_FILE = 1, PROCESSING = 2, DONE = 3, ERROR = -1;
     final MutableLiveData<Chat> chat;
     final MutableLiveData<String> title;
     final MutableLiveData<Integer> loadingStage;

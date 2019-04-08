@@ -24,7 +24,6 @@ public class ShareActivity extends AppCompatActivity {
         setContentView(R.layout.activity_share);
         findViewById(R.id.progressBarLoading).setVisibility(View.VISIBLE);
         findViewById(R.id.textViewLoading).setVisibility(View.VISIBLE);
-
         final LoadingViewModel viewModel = android.arch.lifecycle.ViewModelProviders.of(this).get(LoadingViewModel.class);
         final Observer<Chat> chatObserver = new Observer<Chat>() {
             private FragmentTransaction transaction;
@@ -66,12 +65,6 @@ public class ShareActivity extends AppCompatActivity {
                         }
                     }
                     transaction.commit();
-                    findViewById(R.id.progressBarLoading).setVisibility(View.GONE);
-                    findViewById(R.id.textViewLoading).setVisibility(View.GONE);
-                } else {
-                    findViewById(R.id.progressBarLoading).setVisibility(View.GONE);
-                    findViewById(R.id.textViewLoading).setVisibility(View.VISIBLE);
-                    ((TextView) findViewById(R.id.textViewLoading)).setText(R.string.error_loading);
                 }
             }
 
@@ -88,6 +81,8 @@ public class ShareActivity extends AppCompatActivity {
             public void onChanged(@Nullable Integer integer) {
                 if (integer != null) {
                     TextView textView = findViewById(R.id.textViewLoading);
+                    textView.setVisibility(View.VISIBLE);
+                    findViewById(R.id.progressBarLoading).setVisibility(View.VISIBLE);
                     switch (integer) {
                         case LoadingViewModel.OPENING_FILE:
                             textView.setText(R.string.opening_file);
@@ -97,6 +92,14 @@ public class ShareActivity extends AppCompatActivity {
                             break;
                         case LoadingViewModel.PROCESSING:
                             textView.setText(R.string.processing);
+                            break;
+                        case LoadingViewModel.DONE:
+                            findViewById(R.id.progressBarLoading).setVisibility(View.GONE);
+                            textView.setVisibility(View.GONE);
+                            break;
+                        case LoadingViewModel.ERROR:
+                            findViewById(R.id.progressBarLoading).setVisibility(View.GONE);
+                            textView.setText(R.string.error_loading);
                             break;
                     }
                 }
@@ -129,8 +132,6 @@ public class ShareActivity extends AppCompatActivity {
                     Toast.makeText(this, R.string.toast_faulty_data, Toast.LENGTH_LONG).show();
                 }
                 viewModel.load(getContentResolver(), uri);
-                viewModel.chat.observe(this, chatObserver);
-                viewModel.loadingStage.observe(this, loadingStageObserver);
             }
         } else {
             //load title
@@ -139,5 +140,7 @@ public class ShareActivity extends AppCompatActivity {
             chatObserver.onChanged(viewModel.chat.getValue());
             loadingStageObserver.onChanged(viewModel.loadingStage.getValue());
         }
+        viewModel.chat.observe(this, chatObserver);
+        viewModel.loadingStage.observe(this, loadingStageObserver);
     }
 }
