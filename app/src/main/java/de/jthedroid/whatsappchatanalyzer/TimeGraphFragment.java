@@ -95,9 +95,9 @@ public class TimeGraphFragment extends Fragment {
             if (showTap) {
                 if (darkTheme) p.setColor(Color.argb(50, 255, 255, 255));
                 else p.setColor(Color.argb(50, 0, 0, 0));
-                canvas.drawLine(x, padding, x, h - padding, p);
                 float yHighlight = map(valuesY[highlightIndex], h - padding, padding);
                 float xHighlight = map(valuesX[highlightIndex], padding, w - padding);
+                canvas.drawLine(xHighlight, padding, xHighlight, h - padding, p);
                 canvas.drawLine(padding, yHighlight, w - padding, yHighlight, p);
                 p.setColor(darkTheme ? Color.WHITE : Color.BLACK);
                 canvas.drawCircle(xHighlight, yHighlight, 5, p);
