@@ -114,11 +114,11 @@ class Chat {
         return sorted;
     }
 
-    private GraphData createTotalMessagesGraph() {  //TODO: improve scaling (now, the end is always cut off (<500))
+    private GraphData createTotalMessagesGraph() {
         float[] xData, yData;
         int msgCount = messages.size();
         if (msgCount == 0) return null;
-        int step;
+        float step;
         if (msgCount <= MAX_GRAPH_POINTS) {
             xData = new float[msgCount];
             yData = new float[msgCount];
@@ -126,12 +126,12 @@ class Chat {
         } else {
             xData = new float[MAX_GRAPH_POINTS];
             yData = new float[MAX_GRAPH_POINTS];
-            step = msgCount / MAX_GRAPH_POINTS;
+            step = msgCount / (float) MAX_GRAPH_POINTS;
         }
         String[] xDesc = new String[xData.length], yDesc = new String[yData.length];
         DateFormat df = DateFormat.getDateTimeInstance();
         for (int i = 0; i < xData.length; i++) {
-            Message msg = messages.get(i * step);
+            Message msg = messages.get((int) (i * step));
             xData[i] = msg.getDate().getTime(); //timecode
             xDesc[i] = df.format(msg.getDate());
             yData[i] = i * step;  //total messages at this point
