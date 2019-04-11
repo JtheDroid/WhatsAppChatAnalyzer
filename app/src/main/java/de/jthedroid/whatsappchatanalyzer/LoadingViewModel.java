@@ -5,13 +5,14 @@ import android.arch.lifecycle.ViewModel;
 import android.content.ContentResolver;
 import android.net.Uri;
 
-class LoadingViewModel extends ViewModel {
+@SuppressWarnings("WeakerAccess")
+public class LoadingViewModel extends ViewModel {
     static final int OPENING_FILE = 0, LOADING_FILE = 1, PROCESSING = 2, DONE = 3, ERROR = -1;
     final MutableLiveData<Chat> chat;
     final MutableLiveData<String> title;
     final MutableLiveData<Integer> loadingStage;
 
-    LoadingViewModel() {
+    public LoadingViewModel() {
         chat = new MutableLiveData<>();
         title = new MutableLiveData<>();
         loadingStage = new MutableLiveData<>();
