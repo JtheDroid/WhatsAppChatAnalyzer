@@ -13,3 +13,8 @@
 /captures
 .externalNativeBuild
 *.png
+/app/debug
+/app/release
+/gradle
+gradlew*
+gradle.properties
