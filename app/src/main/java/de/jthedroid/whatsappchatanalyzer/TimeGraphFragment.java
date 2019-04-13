@@ -6,6 +6,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
+import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -45,7 +46,7 @@ public class TimeGraphFragment extends Fragment {
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_time_graph, container, false);
         FrameLayout fl = v.findViewById(R.id.flGraph);
-        fl.addView(new GraphView(getActivity(), graphData, fl));
+        fl.addView(new GraphView(getActivity(), graphData, fl.findViewById(R.id.progressBarGraphLoading)));
         return v;
     }
 
@@ -57,15 +58,16 @@ public class TimeGraphFragment extends Fragment {
         Bitmap bitmap = null;
         Thread thread;
         GraphViewRunnable runnable;
-        FrameLayout fl;
+        View loadingView;
         float lastW, lastH;
         float x, y;
         boolean showTap = false;
         int highlightIndex;
-        float padding = 50;
+        float padding = 50, textPadding = 5;
         boolean darkTheme;
+        Rect textXPos, textXBox, textYPos, textYBox;
 
-        GraphView(Context context, GraphData graphData, FrameLayout fl) {
+        GraphView(Context context, GraphData graphData, View loadingView) {
             super(context);
             this.graphData = graphData;
             this.valuesX = graphData.getXData();
@@ -75,8 +77,12 @@ public class TimeGraphFragment extends Fragment {
             display.set(500, 250);
             runnable = new GraphViewRunnable();
             thread = new Thread(runnable);
-            this.fl = fl;
+            this.loadingView = loadingView;
             darkTheme = getContext().getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE).getBoolean(getString(R.string.preference_key_theme), false);
+            textXPos = new Rect();
+            textXBox = new Rect();
+            textYPos = new Rect();
+            textYBox = new Rect();
         }
 
         @Override
@@ -85,29 +91,72 @@ public class TimeGraphFragment extends Fragment {
             int w = getWidth();
             int h = getHeight();
             if (bitmap == null || bitmap.getWidth() != w || bitmap.getHeight() != h) {
-                fl.findViewById(R.id.progressBarGraphLoading).setVisibility(VISIBLE);
+                setLoadingVisible(true);
                 runnable.set(w, h);
                 if (!runnable.running && !thread.isAlive()) thread.start();
             } else {
                 canvas.drawBitmap(bitmap, 0, 0, null);
-                fl.findViewById(R.id.progressBarGraphLoading).setVisibility(GONE);
+                setLoadingVisible(false);
             }
             if (showTap) {
-                if (darkTheme) p.setColor(Color.argb(50, 255, 255, 255));
-                else p.setColor(Color.argb(50, 0, 0, 0));
+                p.setColor(getTransparentColor(50, false));
                 float yHighlight = map(valuesY[highlightIndex], h - padding, padding);
                 float xHighlight = map(valuesX[highlightIndex], padding, w - padding);
                 canvas.drawLine(xHighlight, padding, xHighlight, h - padding, p);
                 canvas.drawLine(padding, yHighlight, w - padding, yHighlight, p);
-                p.setColor(darkTheme ? Color.WHITE : Color.BLACK);
+                p.setColor(getColor(false));
                 canvas.drawCircle(xHighlight, yHighlight, 5, p);
+                String textX = graphData.getXDesc()[highlightIndex], textY = graphData.getYDesc()[highlightIndex];
+                getTextXBounds(textX, xHighlight, h - padding / 2, w, p);
+                getTextYBounds(textY, xHighlight, yHighlight, w, h, p);
+                p.setColor(getTransparentColor(100, true));
+                canvas.drawRect(textXBox, p);
+                canvas.drawRect(textYBox, p);
                 p.setTextAlign(Paint.Align.CENTER);
                 p.setTextSize(30);
-                canvas.drawText(graphData.getXDesc()[highlightIndex], w / 2f, h - padding / 2, p);  //TODO: move with x?
-                canvas.drawText(graphData.getYDesc()[highlightIndex], xHighlight, yHighlight - padding / 4, p);
+                p.setColor(getColor(false));
+                canvas.drawText(textX, textXPos.exactCenterX(), textXPos.bottom, p);
+                canvas.drawText(textY, textYPos.exactCenterX(), textYPos.bottom, p);
             }
             lastW = w;
             lastH = h;
+        }
+
+        private void setLoadingVisible(boolean show) {
+            loadingView.setVisibility(show ? VISIBLE : GONE);
+
+        }
+
+        private int getColor(boolean invert) {
+            return (darkTheme ^ invert) ? Color.WHITE : Color.BLACK;
+        }
+
+        private int getTransparentColor(int alpha, boolean invert) {
+            return (darkTheme ^ invert) ?
+                    Color.argb(alpha, 255, 255, 255) :
+                    Color.argb(alpha, 0, 0, 0);
+        }
+
+        private void getTextXBounds(String text, float xPos, float yPos, int w, Paint p) {  //for TextAlign Paint.Align.CENTER
+            p.getTextBounds(text, 0, text.length(), textXPos);
+            float textW = textXPos.width();
+            xPos -= textW / 2;
+            if (xPos < textPadding) xPos = textPadding;
+            else if (xPos > w - textPadding - textW) xPos = w - textPadding - textW;
+            textXPos.offset((int) xPos, (int) (yPos + textXPos.height() / 2f));
+            textXBox.set(textXPos);
+            textXBox.inset(-5, -5);
+        }
+
+        private void getTextYBounds(String text, float xPos, float yPos, int w, int h, Paint p) {  //for TextAlign Paint.Align.CENTER
+            p.getTextBounds(text, 0, text.length(), textYPos);
+            float textW = textYPos.width();
+            xPos = xPos > w / 2f ? textPadding : w - textPadding - textW;
+            if (yPos < textPadding) yPos = textPadding;
+            if (yPos > h - textPadding) yPos = h - textPadding;
+            textYPos.offset((int) xPos, (int) (yPos + textYPos.height() / 2f));
+            textYBox.set(textYPos);
+            textYBox.inset(-5, -5);
         }
 
         @Override

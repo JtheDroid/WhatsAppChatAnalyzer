@@ -39,6 +39,7 @@ class ChatLoadingThread extends Thread {
             lvm.setChat(chat.isValid() ? chat : null);
         } catch (IOException e) {
             e.printStackTrace();
+            lvm.loadingStage.postValue(ERROR);
         }
     }
 }

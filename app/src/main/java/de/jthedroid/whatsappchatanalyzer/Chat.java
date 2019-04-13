@@ -135,7 +135,7 @@ class Chat {
             xData[i] = msg.getDate().getTime(); //timecode
             xDesc[i] = df.format(msg.getDate());
             yData[i] = i * step;  //total messages at this point
-            yDesc[i] = "" + yData[i];
+            yDesc[i] = "" + (int) yData[i];
         }
         GraphData gD = new GraphData(xData, yData, xDesc, yDesc);
         gD.scale();
