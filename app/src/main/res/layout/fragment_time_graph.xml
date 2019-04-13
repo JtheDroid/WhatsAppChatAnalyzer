@@ -6,6 +6,13 @@
     android:layout_height="match_parent"
     tools:context=".TimeGraphFragment">
 
+    <view
+        android:id="@+id/graphView"
+        class="de.jthedroid.whatsappchatanalyzer.GraphView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center" />
+
     <ProgressBar
         android:id="@+id/progressBarGraphLoading"
         style="?android:attr/progressBarStyle"
