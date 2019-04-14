@@ -41,6 +41,14 @@ public class GraphView extends View {  //TODO: add touch interaction: (scrolling
         textXBox = new Rect();
         textYPos = new Rect();
         textYBox = new Rect();
+        if (isInEditMode()) {
+            valuesX = new float[10];
+            valuesY = new float[10];
+            for (int i = 0; i < 10; i++) {
+                valuesX[i] = 0.1f * i;
+                valuesY[i] = (float) java.lang.Math.random();
+            }
+        }
     }
 
     public void init(GraphData graphData, View loadingView) {
@@ -63,15 +71,23 @@ public class GraphView extends View {  //TODO: add touch interaction: (scrolling
             canvas.drawBitmap(bitmap, 0, 0, null);
             setLoadingVisible(false);
         }
-        if (showTap) {
+
+        if (showTap || isInEditMode()) {
             p.setColor(getTransparentColor(50, false));
+            if (isInEditMode()) {
+                highlightIndex = findNearestIndex(valuesX, (float) java.lang.Math.random());
+            }
             float yHighlight = map(valuesY[highlightIndex], h - padding, padding);
             float xHighlight = map(valuesX[highlightIndex], padding, w - padding);
             canvas.drawLine(xHighlight, padding, xHighlight, h - padding, p);
             canvas.drawLine(padding, yHighlight, w - padding, yHighlight, p);
             p.setColor(getColor(false));
             canvas.drawCircle(xHighlight, yHighlight, 5, p);
-            String textX = graphData.getXDesc()[highlightIndex], textY = graphData.getYDesc()[highlightIndex];
+            String textX, textY;
+            if (!isInEditMode()) {
+                textX = graphData.getXDesc()[highlightIndex];
+                textY = graphData.getYDesc()[highlightIndex];
+            } else textX = textY = "Sample data";
             getTextXBounds(textX, xHighlight, h - padding / 2, w, p);
             getTextYBounds(textY, xHighlight, yHighlight, w, h, p);
             p.setColor(getTransparentColor(100, true));
