@@ -28,7 +28,7 @@ public class TimeGraphFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        DataProvider dataProvider = (DataProvider) getActivity();
+        DataProvider dataProvider = DataStorage.getInstance();
         if (getArguments() != null && dataProvider != null) {
             String key = getArguments().getString(GRAPH_DATA);
             graphData = (GraphData) dataProvider.getData(key);

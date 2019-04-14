@@ -13,21 +13,21 @@ import android.view.MotionEvent;
 import android.view.View;
 
 public class GraphView extends View {  //TODO: add touch interaction: (scrolling, zooming?)
-    final Point display;
+    private final Point display;
     private final Paint p;
-    GraphData graphData;
-    float[] valuesX, valuesY;
-    Bitmap bitmap = null;
-    Thread thread;
-    GraphViewRunnable runnable;
-    View loadingView;
-    float lastW, lastH;
-    float x, y;
-    boolean showTap = false;
-    int highlightIndex;
-    float padding = 50, textPadding = 5;
-    boolean darkTheme;
-    Rect textXPos, textXBox, textYPos, textYBox;
+    private GraphData graphData;
+    private float[] valuesX, valuesY;
+    private Bitmap bitmap = null;
+    private Thread thread;
+    private GraphViewRunnable runnable;
+    private View loadingView;
+    private float lastW, lastH;
+    private float x, y;
+    private boolean showTap = false;
+    private int highlightIndex;
+    private float padding = 50, textPadding = 5;
+    private boolean darkTheme;
+    private Rect textXPos, textXBox, textYPos, textYBox;
 
     public GraphView(Context context, AttributeSet attrs) {
         super(context, attrs);

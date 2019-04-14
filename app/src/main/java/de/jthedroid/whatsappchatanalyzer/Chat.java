@@ -15,6 +15,8 @@ import java.util.HashMap;
 
 import de.jthedroid.whatsappchatanalyzer.bintree.BinTree;
 
+import static de.jthedroid.whatsappchatanalyzer.LoadingStage.PROCESSING;
+
 class Chat {
     private static final int MAX_GRAPH_POINTS = 10000;
 
@@ -24,13 +26,13 @@ class Chat {
     private GraphData totalMessagesGraph, messagesPerDayGraph;
     private boolean valid = true;
 
-    void init(BufferedReader br, LoadingViewModel lvm) throws IOException {
+    void init(BufferedReader br, LoadingInfoProvider lip) throws IOException {
         ArrayList<String> lines = readLines(br);
         ArrayList<String> strings = createMessageStrings(lines);
         if (!valid) {
             return;
         }
-        lvm.loadingStage.postValue(LoadingViewModel.PROCESSING);
+        lip.loadingStage.postValue(PROCESSING);
         addMessages(strings);
         if (messages.isEmpty()) {
             valid = false;
@@ -195,6 +197,10 @@ class Chat {
 
     int getMsgCount() {
         return messages.size();
+    }
+
+    ArrayList<Message> getMessages() {
+        return messages;
     }
 
     boolean isValid() {

@@ -1,5 +1,6 @@
 package de.jthedroid.whatsappchatanalyzer;
 
+import android.app.Activity;
 import android.arch.lifecycle.Observer;
 import android.content.Intent;
 import android.net.Uri;
@@ -14,23 +15,19 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Locale;
-import java.util.Objects;
 
-public class ShareActivity extends ThemeMenuActivity implements DataProvider {
-    private LoadingViewModel viewModel;
+import static de.jthedroid.whatsappchatanalyzer.LoadingStage.ERROR;
 
+public class ShareActivity extends ThemeMenuActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        viewModel = android.arch.lifecycle.ViewModelProviders.of(this).get(LoadingViewModel.class);
-        //create dataMap if not existent
-        if (viewModel.dataMap.getValue() == null)
-            viewModel.dataMap.setValue(new HashMap<String, ChatData>());
+        final DataStorage ds = DataStorage.getInstance();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_share);
         findViewById(R.id.progressBarLoading).setVisibility(View.VISIBLE);
         findViewById(R.id.textViewLoading).setVisibility(View.VISIBLE);
+        final Activity thisActivity = this;
         final Observer<Chat> chatObserver = new Observer<Chat>() {
             private FragmentTransaction transaction;
 
@@ -46,7 +43,7 @@ public class ShareActivity extends ThemeMenuActivity implements DataProvider {
                     tag = "graphView1";
                     if (fragmentIsNew(tag)) {
                         String key = tag + "_data";
-                        putData(key, c.getTotalMessagesGraph());
+                        ds.putData(key, c.getTotalMessagesGraph());
                         TimeGraphFragment tgf = TimeGraphFragment.newInstance(key);
                         addFragment(tgf, tag);
                     }
@@ -58,9 +55,22 @@ public class ShareActivity extends ThemeMenuActivity implements DataProvider {
                     tag = "graphView2";
                     if (fragmentIsNew(tag)) {
                         String key = tag + "_data";
-                        putData(key, c.getMessagesPerDayGraph());
+                        ds.putData(key, c.getMessagesPerDayGraph());
                         TimeGraphFragment tgf = TimeGraphFragment.newInstance(key);
                         addFragment(tgf, tag);
+                    }
+                    tag = "buttonOpenMessages";
+                    if (fragmentIsNew(tag)) {
+                        String key = "showMessagesActivity";
+                        Runnable r = new Runnable() {
+                            @Override
+                            public void run() {
+                                Intent intent = new Intent(thisActivity, MessagesActivity.class);
+                                startActivity(intent);
+                            }
+                        };
+                        DataStorage.getInstance().putRunnable(key, r);
+                        addFragment(ButtonFragment.newInstance(getString(R.string.show_messages), key), tag);
                     }
                     tag = "headingSender";
                     if (fragmentIsNew(tag)) {
@@ -86,28 +96,28 @@ public class ShareActivity extends ThemeMenuActivity implements DataProvider {
                 transaction.add(R.id.linearLayoutSender, f, tag);
             }
         };
-        final Observer<Integer> loadingStageObserver = new Observer<Integer>() {
+        final Observer<LoadingStage> loadingStageObserver = new Observer<LoadingStage>() {
             @Override
-            public void onChanged(@Nullable Integer integer) {
-                if (integer != null) {
+            public void onChanged(@Nullable LoadingStage loadingStage) {
+                if (loadingStage != null) {
                     TextView textView = findViewById(R.id.textViewLoading);
                     textView.setVisibility(View.VISIBLE);
                     findViewById(R.id.progressBarLoading).setVisibility(View.VISIBLE);
-                    switch (integer) {
-                        case LoadingViewModel.OPENING_FILE:
+                    switch (loadingStage) {
+                        case OPENING_FILE:
                             textView.setText(R.string.opening_file);
                             break;
-                        case LoadingViewModel.LOADING_FILE:
+                        case LOADING_FILE:
                             textView.setText(R.string.loading);
                             break;
-                        case LoadingViewModel.PROCESSING:
+                        case PROCESSING:
                             textView.setText(R.string.processing);
                             break;
-                        case LoadingViewModel.DONE:
+                        case DONE:
                             findViewById(R.id.progressBarLoading).setVisibility(View.GONE);
                             textView.setVisibility(View.GONE);
                             break;
-                        case LoadingViewModel.ERROR:
+                        case ERROR:
                             findViewById(R.id.progressBarLoading).setVisibility(View.GONE);
                             textView.setText(R.string.error_loading);
                             break;
@@ -128,7 +138,7 @@ public class ShareActivity extends ThemeMenuActivity implements DataProvider {
                     title = title.substring(title.indexOf('"') + 1, title.lastIndexOf('"'));
                 }
                 setTitle(title);
-                viewModel.title.setValue(title);
+                ds.title.setValue(title);
                 //read uri from intent
                 Uri uri = null;
                 ArrayList<Parcelable> extraList = intent.getParcelableArrayListExtra(Intent.EXTRA_STREAM);
@@ -141,27 +151,21 @@ public class ShareActivity extends ThemeMenuActivity implements DataProvider {
                 if (uri == null)
                     Toast.makeText(this, R.string.toast_faulty_data, Toast.LENGTH_LONG).show();
                 else Log.d("ShareActivity", "Uri: " + uri.toString());
-                //start loading the text file
-                viewModel.load(getContentResolver(), uri);
+                //start loading the text file in a new Thread
+                if (uri != null) {
+                    ChatLoadingThread clt = new ChatLoadingThread(getContentResolver(), uri, ds);
+                    clt.start();
+                } else ds.loadingStage.setValue(ERROR);
+
             }
         } else {
             //load title
-            setTitle(viewModel.title.getValue());
+            setTitle(ds.title.getValue());
             //load data from Chat
-            chatObserver.onChanged(viewModel.chat.getValue());
-            loadingStageObserver.onChanged(viewModel.loadingStage.getValue());
+            chatObserver.onChanged(ds.chat.getValue());
+            loadingStageObserver.onChanged(ds.loadingStage.getValue());
         }
-        viewModel.chat.observe(this, chatObserver);
-        viewModel.loadingStage.observe(this, loadingStageObserver);
-    }
-
-    @Override
-    public ChatData getData(String key) {
-        return Objects.requireNonNull(viewModel.dataMap.getValue()).get(key);
-    }
-
-    @Override
-    public void putData(String key, ChatData chatData) {
-        Objects.requireNonNull(viewModel.dataMap.getValue()).put(key, chatData);
+        ds.chat.observe(this, chatObserver);
+        ds.loadingStage.observe(this, loadingStageObserver);
     }
 }

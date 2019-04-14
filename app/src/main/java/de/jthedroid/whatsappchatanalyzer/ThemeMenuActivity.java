@@ -9,7 +9,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 public abstract class ThemeMenuActivity extends AppCompatActivity {
-    boolean darkTheme;
+    private boolean darkTheme;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {

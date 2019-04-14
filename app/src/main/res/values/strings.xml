@@ -15,4 +15,5 @@
     <string name="preference_key_theme" translatable="false">dark_theme_enabled</string>
     <string name="switch_theme_light">Use light theme</string>
     <string name="switch_theme_dark">Use dark theme</string>
+    <string name="show_messages">Show Messages</string>
 </resources>
