@@ -6,8 +6,8 @@ android {
         applicationId "de.jthedroid.whatsappchatanalyzer"
         minSdkVersion 23
         targetSdkVersion 28
-        versionCode 1
-        versionName "0.01"
+        versionCode 2
+        versionName "0.02"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {

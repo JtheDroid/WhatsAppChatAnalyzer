@@ -8,22 +8,29 @@ import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Objects;
 
-public class ShareActivity extends ThemeMenuActivity {
+public class ShareActivity extends ThemeMenuActivity implements DataProvider {
+    private LoadingViewModel viewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        viewModel = android.arch.lifecycle.ViewModelProviders.of(this).get(LoadingViewModel.class);
+        //create dataMap if not existent
+        if (viewModel.dataMap.getValue() == null)
+            viewModel.dataMap.setValue(new HashMap<String, ChatData>());
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_share);
         findViewById(R.id.progressBarLoading).setVisibility(View.VISIBLE);
         findViewById(R.id.textViewLoading).setVisibility(View.VISIBLE);
-        final LoadingViewModel viewModel = android.arch.lifecycle.ViewModelProviders.of(this).get(LoadingViewModel.class);
         final Observer<Chat> chatObserver = new Observer<Chat>() {
             private FragmentTransaction transaction;
 
@@ -38,7 +45,9 @@ public class ShareActivity extends ThemeMenuActivity {
                     }
                     tag = "graphView1";
                     if (fragmentIsNew(tag)) {
-                        TimeGraphFragment tgf = TimeGraphFragment.newInstance(c.getTotalMessagesGraph());
+                        String key = tag + "_data";
+                        putData(key, c.getTotalMessagesGraph());
+                        TimeGraphFragment tgf = TimeGraphFragment.newInstance(key);
                         addFragment(tgf, tag);
                     }
                     tag = "headingGraph2";
@@ -48,7 +57,9 @@ public class ShareActivity extends ThemeMenuActivity {
                     }
                     tag = "graphView2";
                     if (fragmentIsNew(tag)) {
-                        TimeGraphFragment tgf = TimeGraphFragment.newInstance(c.getMessagesPerDayGraph());
+                        String key = tag + "_data";
+                        putData(key, c.getMessagesPerDayGraph());
+                        TimeGraphFragment tgf = TimeGraphFragment.newInstance(key);
                         addFragment(tgf, tag);
                     }
                     tag = "headingSender";
@@ -118,7 +129,7 @@ public class ShareActivity extends ThemeMenuActivity {
                 }
                 setTitle(title);
                 viewModel.title.setValue(title);
-                //start loading chat .txt file
+                //read uri from intent
                 Uri uri = null;
                 ArrayList<Parcelable> extraList = intent.getParcelableArrayListExtra(Intent.EXTRA_STREAM);
                 if (extraList != null && !extraList.isEmpty()) {
@@ -127,9 +138,10 @@ public class ShareActivity extends ThemeMenuActivity {
                         uri = (Uri) p;
                     }
                 }
-                if (uri == null) {
+                if (uri == null)
                     Toast.makeText(this, R.string.toast_faulty_data, Toast.LENGTH_LONG).show();
-                }
+                else Log.d("ShareActivity", "Uri: " + uri.toString());
+                //start loading the text file
                 viewModel.load(getContentResolver(), uri);
             }
         } else {
@@ -141,5 +153,15 @@ public class ShareActivity extends ThemeMenuActivity {
         }
         viewModel.chat.observe(this, chatObserver);
         viewModel.loadingStage.observe(this, loadingStageObserver);
+    }
+
+    @Override
+    public ChatData getData(String key) {
+        return Objects.requireNonNull(viewModel.dataMap.getValue()).get(key);
+    }
+
+    @Override
+    public void putData(String key, ChatData chatData) {
+        Objects.requireNonNull(viewModel.dataMap.getValue()).put(key, chatData);
     }
 }

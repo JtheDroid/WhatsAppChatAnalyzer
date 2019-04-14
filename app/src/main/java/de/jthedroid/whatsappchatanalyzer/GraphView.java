@@ -88,7 +88,7 @@ public class GraphView extends View {  //TODO: add touch interaction: (scrolling
     }
 
     private void setLoadingVisible(boolean show) {
-        loadingView.setVisibility(show ? VISIBLE : GONE);
+        if (loadingView != null) loadingView.setVisibility(show ? VISIBLE : GONE);
 
     }
 

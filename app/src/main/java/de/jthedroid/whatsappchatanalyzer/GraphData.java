@@ -1,32 +1,9 @@
 package de.jthedroid.whatsappchatanalyzer;
 
-import android.os.Parcel;
-import android.os.Parcelable;
-
-public class GraphData implements Parcelable {    //TODO: more data
-    public static final Parcelable.Creator<GraphData> CREATOR
-            = new Parcelable.Creator<GraphData>() {
-        public GraphData createFromParcel(Parcel in) {
-            return new GraphData(in);
-        }
-
-        public GraphData[] newArray(int size) {
-            return new GraphData[size];
-        }
-    };
+class GraphData implements ChatData {
     private float[] rawXData, rawYData;
     private float[] xData, yData;
     private String[] xDesc, yDesc;
-
-
-    private GraphData(Parcel parcel) {
-        rawXData = parcel.createFloatArray();
-        rawYData = parcel.createFloatArray();
-        xData = parcel.createFloatArray();
-        yData = parcel.createFloatArray();
-        xDesc = parcel.createStringArray();
-        yDesc = parcel.createStringArray();
-    }
 
     GraphData(float[] rawXData, float[] rawYData, String[] xDesc, String[] yDesc) {
         this.rawXData = rawXData;
@@ -34,22 +11,6 @@ public class GraphData implements Parcelable {    //TODO: more data
         this.xDesc = xDesc;
         this.yDesc = yDesc;
         scale();
-    }
-
-    //Parcelable
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel parcel, int i) {
-        parcel.writeFloatArray(rawXData);
-        parcel.writeFloatArray(rawYData);
-        parcel.writeFloatArray(xData);
-        parcel.writeFloatArray(yData);
-        parcel.writeStringArray(xDesc);
-        parcel.writeStringArray(yDesc);
     }
 
     /**
