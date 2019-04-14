@@ -1,27 +1,23 @@
 package de.jthedroid.whatsappchatanalyzer;
 
 import android.os.Bundle;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 
 import java.util.Objects;
 
-public class MessagesActivity extends AppCompatActivity {
+public class MessagesActivity extends ThemeMenuActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_messages);
-        FragmentManager manager = getSupportFragmentManager();
-        FragmentTransaction transaction = manager.beginTransaction();
-        int msgCount = Objects.requireNonNull(DataStorage.getInstance().chat.getValue()).getMsgCount();
-        String tag;
-        for (int i = 0; i < msgCount; i++) {
-            tag = "msg" + i;
-            if (manager.findFragmentByTag(tag) == null)
-                transaction.add(R.id.linearLayoutMessages, MessageFragment.newInstance(i), tag);
-        }
-        transaction.commit();
+        RecyclerView recyclerView = findViewById(R.id.recyclerViewMessages);
+        recyclerView.setHasFixedSize(true);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        layoutManager.setStackFromEnd(true);
+        recyclerView.setLayoutManager(layoutManager);
+        RecyclerView.Adapter adapter = new MessagesRecyclerViewAdapter(Objects.requireNonNull(DataStorage.getInstance().chat.getValue()).getMessages());
+        recyclerView.setAdapter(adapter);
     }
 }

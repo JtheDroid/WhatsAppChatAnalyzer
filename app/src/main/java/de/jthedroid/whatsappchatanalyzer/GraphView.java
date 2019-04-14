@@ -18,16 +18,16 @@ public class GraphView extends View {  //TODO: add touch interaction: (scrolling
     private GraphData graphData;
     private float[] valuesX, valuesY;
     private Bitmap bitmap = null;
-    private Thread thread;
-    private GraphViewRunnable runnable;
+    private final Thread thread;
+    private final GraphViewRunnable runnable;
     private View loadingView;
     private float lastW, lastH;
     private float x, y;
     private boolean showTap = false;
     private int highlightIndex;
-    private float padding = 50, textPadding = 5;
-    private boolean darkTheme;
-    private Rect textXPos, textXBox, textYPos, textYBox;
+    final private float padding = 50, textPadding = 5;
+    private final boolean darkTheme;
+    final private Rect textXPos, textXBox, textYPos, textYBox;
 
     public GraphView(Context context, AttributeSet attrs) {
         super(context, attrs);
