@@ -14,7 +14,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.Locale;
 
 import static de.jthedroid.whatsappchatanalyzer.LoadingStage.ERROR;
 
@@ -58,6 +57,19 @@ public class ShareActivity extends ThemeMenuActivity {
                         TimeGraphFragment tgf = TimeGraphFragment.newInstance(key);
                         addFragment(tgf, tag);
                     }
+                    tag = "buttonOpenSenderList";
+                    if (fragmentIsNew(tag)) {
+                        String key = "showSenderListActivity";
+                        Runnable r = new Runnable() {
+                            @Override
+                            public void run() {
+                                Intent intent = new Intent(thisActivity, SenderListActivity.class);
+                                startActivity(intent);
+                            }
+                        };
+                        DataStorage.getInstance().putRunnable(key, r);
+                        addFragment(ButtonFragment.newInstance(getString(R.string.show_sender_list), key), tag);
+                    }
                     tag = "buttonOpenMessages";
                     if (fragmentIsNew(tag)) {
                         String key = "showMessagesActivity";
@@ -70,18 +82,6 @@ public class ShareActivity extends ThemeMenuActivity {
                         };
                         DataStorage.getInstance().putRunnable(key, r);
                         addFragment(ButtonFragment.newInstance(getString(R.string.show_messages), key), tag);
-                    }
-                    tag = "headingSender";
-                    if (fragmentIsNew(tag)) {
-                        HeadingFragment heading = HeadingFragment.newInstance(String.format(Locale.getDefault(), "%s (%d)", getString(R.string.sent_messages), c.getMsgCount()));
-                        addFragment(heading, tag);
-                    }
-                    for (Sender sender : c.getSortedSenders()) {
-                        tag = sender.toString();
-                        if (fragmentIsNew(tag)) {
-                            SenderFragment sf = SenderFragment.newInstance(sender.name, sender.getMsgCount(), c.getMaxMsgCount());
-                            addFragment(sf, tag);
-                        }
                     }
                     transaction.commit();
                 }

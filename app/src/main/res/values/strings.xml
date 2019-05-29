@@ -16,4 +16,5 @@
     <string name="switch_theme_light">Use light theme</string>
     <string name="switch_theme_dark">Use dark theme</string>
     <string name="show_messages">Show Messages</string>
+    <string name="show_sender_list">Show Sender List</string>
 </resources>

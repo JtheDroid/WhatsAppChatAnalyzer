@@ -11,7 +11,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".MessagesActivity"></activity>
+        <activity android:name=".SenderListActivity"></activity>
+        <activity android:name=".MessagesActivity" />
         <activity android:name=".ShareActivity">
             <intent-filter>
                 <action android:name="android.intent.action.SEND_MULTIPLE" />
