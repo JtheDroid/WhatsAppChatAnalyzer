@@ -9,7 +9,6 @@ import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -148,16 +147,17 @@ public class ShareActivity extends ThemeMenuActivity {
                         uri = (Uri) p;
                     }
                 }
-                if (uri == null)
+                if (uri == null) {
                     Toast.makeText(this, R.string.toast_faulty_data, Toast.LENGTH_LONG).show();
-                else Log.d("ShareActivity", "Uri: " + uri.toString());
+                    ds.loadingStage.setValue(ERROR);
+                }
                 //start loading the text file in a new Thread
-                if (uri != null) {
+                else {
                     ChatLoadingThread clt = new ChatLoadingThread(getContentResolver(), uri, ds);
                     clt.start();
-                } else ds.loadingStage.setValue(ERROR);
+                }
 
-            }
+            } else ds.loadingStage.setValue(ERROR);
         } else {
             //load title
             setTitle(ds.title.getValue());
