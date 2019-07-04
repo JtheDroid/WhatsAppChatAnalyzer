@@ -1,5 +1,7 @@
 package de.jthedroid.whatsappchatanalyzer;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
@@ -14,18 +16,56 @@ import java.util.ArrayList;
 import java.util.Objects;
 
 public class MessagesActivity extends ThemeMenuActivity {
+    private RecyclerView recyclerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_messages);
-        RecyclerView recyclerView = findViewById(R.id.recyclerViewMessages);
+        recyclerView = findViewById(R.id.recyclerViewMessages);
         recyclerView.setHasFixedSize(true);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         layoutManager.setStackFromEnd(true);
         recyclerView.setLayoutManager(layoutManager);
         RecyclerView.Adapter adapter = new MessagesRecyclerViewAdapter(Objects.requireNonNull(DataStorage.getInstance().chat.getValue()).getMessages());
         recyclerView.setAdapter(adapter);
+        final View scrollTop = findViewById(R.id.buttonScrollTop), scrollBottom = findViewById(R.id.buttonScrollBottom);
+        scrollTop.animate().setDuration(500);
+        scrollBottom.animate().setDuration(500);
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                if (newState == RecyclerView.SCROLL_STATE_IDLE) {
+                    scrollTop.animate().alpha(0).setStartDelay(2500).setListener(new AnimatorListenerAdapter() {
+                        @Override
+                        public void onAnimationEnd(Animator animation) {
+                            scrollTop.setVisibility(View.GONE);
+                        }
+                    }).start();
+                    scrollBottom.animate().alpha(0).setStartDelay(2500).setListener(new AnimatorListenerAdapter() {
+                        @Override
+                        public void onAnimationEnd(Animator animation) {
+                            scrollBottom.setVisibility(View.GONE);
+                        }
+                    }).start();
+                } else {
+                    scrollTop.setVisibility(View.VISIBLE);
+                    scrollBottom.setVisibility(View.VISIBLE);
+                    scrollTop.animate().alpha(1).setStartDelay(0).setListener(new AnimatorListenerAdapter() {
+                    }).start();
+                    scrollBottom.animate().alpha(1).setStartDelay(0).setListener(new AnimatorListenerAdapter() {
+                    }).start();
+                }
+            }
+        });
+    }
+
+    public void scrollTop(View v) {
+        recyclerView.scrollToPosition(0);
+    }
+
+    public void scrollBottom(View v) {
+        recyclerView.scrollToPosition(Objects.requireNonNull(recyclerView.getAdapter()).getItemCount() - 1);
     }
 }
 

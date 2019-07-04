@@ -17,4 +17,6 @@
     <string name="switch_theme_dark">Use dark theme</string>
     <string name="show_messages">Show Messages</string>
     <string name="show_sender_list">Show Sender List</string>
+    <string name="scroll_top">To Top</string>
+    <string name="scroll_bottom">To Bottom</string>
 </resources>

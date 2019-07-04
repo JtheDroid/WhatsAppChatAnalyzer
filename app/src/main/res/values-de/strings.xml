@@ -16,4 +16,6 @@
     <string name="switch_theme_dark">Dunkles Design nutzen</string>
     <string name="show_messages">Nachrichten zeigen</string>
     <string name="show_sender_list">Absenderliste anzeigen</string>
+    <string name="scroll_top">Nach oben</string>
+    <string name="scroll_bottom">Nach unten</string>
 </resources>
