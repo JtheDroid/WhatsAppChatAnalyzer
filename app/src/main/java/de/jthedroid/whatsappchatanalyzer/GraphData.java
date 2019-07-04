@@ -4,12 +4,18 @@ class GraphData implements ChatData {
     final private float[] rawXData, rawYData;
     private float[] xData, yData;
     final private String[] xDesc, yDesc;
+    final private GraphType graphType;
 
     GraphData(float[] rawXData, float[] rawYData, String[] xDesc, String[] yDesc) {
+        this(rawXData, rawYData, xDesc, yDesc, GraphType.DEFAULT);
+    }
+
+    GraphData(float[] rawXData, float[] rawYData, String[] xDesc, String[] yDesc, GraphType graphType) {
         this.rawXData = rawXData;
         this.rawYData = rawYData;
         this.xDesc = xDesc;
         this.yDesc = yDesc;
+        this.graphType = graphType;
         scale();
     }
 
@@ -64,4 +70,14 @@ class GraphData implements ChatData {
     String[] getYDesc() {
         return yDesc;
     }
+
+    GraphType getGraphType() {
+        return graphType;
+    }
+}
+
+enum GraphType {
+    DEFAULT,
+    BARGRAPH
+    //HISTOGRAM
 }

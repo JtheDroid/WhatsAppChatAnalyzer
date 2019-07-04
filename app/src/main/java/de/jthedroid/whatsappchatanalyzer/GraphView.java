@@ -219,7 +219,22 @@ public class GraphView extends View {  //TODO: add touch interaction: (scrolling
             }
             Bitmap b = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
             Canvas c = new Canvas(b);
-            p.setColor(Color.RED);
+            GraphType graphType = isInEditMode() ? GraphType.DEFAULT : graphData.getGraphType();
+            switch (graphType) {
+                case DEFAULT:
+                    drawDefault(c);
+                    break;
+                case BARGRAPH:
+                    drawBarGraph(c);
+                    break;
+            }
+            bitmap = b;
+            postInvalidate();
+            running = false;
+        }
+
+        private void drawDefault(Canvas c) {
+            p.setColor(getResources().getColor(R.color.colorGraph, null));
             p.setStrokeWidth(3);
             float fromX = padding, toX = w - padding;
             float fromY = h - padding, toY = padding;
@@ -227,9 +242,17 @@ public class GraphView extends View {  //TODO: add touch interaction: (scrolling
             for (int i = 1; i < valuesX.length; i++) {
                 c.drawLine(lastX, lastY, lastX = map(valuesX[i], fromX, toX), lastY = map(valuesY[i], fromY, toY), p);
             }
-            bitmap = b;
-            postInvalidate();
-            running = false;
+        }
+
+        private void drawBarGraph(Canvas c) {
+            p.setColor(getResources().getColor(R.color.colorGraph, null));
+            p.setStrokeWidth(3);
+            float fromX = padding, toX = w - padding;
+            float fromY = h - padding, toY = padding;
+            for (int i = 1; i < valuesX.length; i++) {
+                float x = map(valuesX[i], fromX, toX), y = map(valuesY[i], fromY, toY);
+                c.drawLine(x, fromY, x, y, p);  //TODO: maybe increase width if necessary
+            }
         }
     }
 }

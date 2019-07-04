@@ -174,7 +174,7 @@ class Chat {
             yData[i] = messageCount; //messages per day
             yDesc[i] = "" + messageCount; //messages per day
         }
-        GraphData gD = new GraphData(xData, yData, xDesc, yDesc);
+        GraphData gD = new GraphData(xData, yData, xDesc, yDesc, GraphType.BARGRAPH);
         gD.scale();
         return gD;
     }
