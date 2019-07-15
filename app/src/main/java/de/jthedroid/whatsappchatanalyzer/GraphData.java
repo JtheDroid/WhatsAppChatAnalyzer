@@ -1,6 +1,6 @@
 package de.jthedroid.whatsappchatanalyzer;
 
-class GraphData implements ChatData {
+class GraphData {
     final private float[] rawXData, rawYData;
     private float[] xData, yData;
     final private String[] xDesc, yDesc;

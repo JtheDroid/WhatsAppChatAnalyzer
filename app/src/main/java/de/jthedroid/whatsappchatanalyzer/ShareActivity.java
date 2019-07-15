@@ -30,7 +30,7 @@ public class ShareActivity extends ThemeMenuActivity {
             private FragmentTransaction transaction;
 
             @Override
-            public void onChanged(@Nullable Chat c) {
+            public void onChanged(@Nullable final Chat c) {
                 if (c != null) {
                     transaction = getSupportFragmentManager().beginTransaction();
                     String tag = "headingGraph1";
@@ -40,11 +40,20 @@ public class ShareActivity extends ThemeMenuActivity {
                     }
                     tag = "graphView1";
                     if (fragmentIsNew(tag)) {
-                        String key = tag + "_data";
-                        ds.putData(key, c.getTotalMessagesGraph());
-                        TimeGraphFragment tgf = TimeGraphFragment.newInstance(key);
+                        final String key = tag + "_data";
+                        final TimeGraphFragment tgf = TimeGraphFragment.newInstance(key);
+                        Runnable r = new Runnable() {
+                            @Override
+                            public void run() {
+                                GraphData gD = c.createTotalMessagesGraph();
+                                ds.putData(key, gD);
+                            }
+                        };
+                        ds.putRunnable(key, r);
+                        ds.runRunnableInThread(key);
                         addFragment(tgf, tag);
                     }
+
                     tag = "headingGraph2";
                     if (fragmentIsNew(tag)) {
                         HeadingFragment heading = HeadingFragment.newInstance(getString(R.string.messages_per_day));
@@ -52,9 +61,17 @@ public class ShareActivity extends ThemeMenuActivity {
                     }
                     tag = "graphView2";
                     if (fragmentIsNew(tag)) {
-                        String key = tag + "_data";
-                        ds.putData(key, c.getMessagesPerDayGraph());
-                        TimeGraphFragment tgf = TimeGraphFragment.newInstance(key);
+                        final String key = tag + "_data";
+                        final TimeGraphFragment tgf = TimeGraphFragment.newInstance(key);
+                        Runnable r = new Runnable() {
+                            @Override
+                            public void run() {
+                                GraphData gD = c.createMessagesPerDayGraph();
+                                ds.putData(key, gD);
+                            }
+                        };
+                        ds.putRunnable(key, r);
+                        ds.runRunnableInThread(key);
                         addFragment(tgf, tag);
                     }
                     tag = "buttonOpenSenderList";
@@ -67,7 +84,7 @@ public class ShareActivity extends ThemeMenuActivity {
                                 startActivity(intent);
                             }
                         };
-                        DataStorage.getInstance().putRunnable(key, r);
+                        ds.putRunnable(key, r);
                         addFragment(ButtonFragment.newInstance(getString(R.string.show_sender_list), key), tag);
                     }
                     tag = "buttonOpenMessages";
@@ -80,7 +97,7 @@ public class ShareActivity extends ThemeMenuActivity {
                                 startActivity(intent);
                             }
                         };
-                        DataStorage.getInstance().putRunnable(key, r);
+                        ds.putRunnable(key, r);
                         addFragment(ButtonFragment.newInstance(getString(R.string.show_messages), key), tag);
                     }
                     transaction.commit();

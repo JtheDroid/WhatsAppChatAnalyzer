@@ -1,5 +1,6 @@
 package de.jthedroid.whatsappchatanalyzer;
 
+import android.arch.lifecycle.Observer;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -7,6 +8,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Rect;
+import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -25,9 +27,11 @@ public class GraphView extends View {  //TODO: add touch interaction: (scrolling
     private float x, y;
     private boolean showTap = false;
     private int highlightIndex;
-    final private float padding = 50, textPadding = 5;
+    private final float padding = 50, textPadding = 5;
     private final boolean darkTheme;
-    final private Rect textXPos, textXBox, textYPos, textYBox;
+    private final Rect textXPos, textXBox, textYPos, textYBox;
+    private final Observer<GraphData> graphDataObserver;
+    private String key = null;
 
     public GraphView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -49,18 +53,48 @@ public class GraphView extends View {  //TODO: add touch interaction: (scrolling
                 valuesY[i] = (float) java.lang.Math.random();
             }
         }
+        graphDataObserver = new Observer<GraphData>() {
+            @Override
+            public void onChanged(@Nullable GraphData graphData) {
+                if (graphData != null) {
+                    init(graphData, loadingView);
+                    postInvalidate();
+                }
+            }
+        };
+    }
+
+    public Observer<GraphData> getGraphDataObserver() {
+        return graphDataObserver;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
     }
 
     public void init(GraphData graphData, View loadingView) {
         this.graphData = graphData;
-        this.valuesX = graphData.getXData();
-        this.valuesY = graphData.getYData();
+        if (graphData != null) {
+            this.valuesX = graphData.getXData();
+            this.valuesY = graphData.getYData();
+        }
         this.loadingView = loadingView;
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
+        if (graphData == null && !isInEditMode()) {
+            setLoadingVisible(true);
+            if (key != null) {
+                GraphData graphData = DataStorage.getInstance().getData(key);
+                if (graphData != null) {
+                    init(graphData, loadingView);
+                    postInvalidate();
+                }
+            }
+            return;
+        }
         int w = getWidth();
         int h = getHeight();
         if (bitmap == null || bitmap.getWidth() != w || bitmap.getHeight() != h) {
@@ -145,10 +179,12 @@ public class GraphView extends View {  //TODO: add touch interaction: (scrolling
         showTap = true;
         x = event.getX();
         y = event.getY();
-        highlightIndex = findNearestIndex(valuesX, unmap(x, padding, lastW - padding));
+        if (graphData != null)
+            highlightIndex = findNearestIndex(valuesX, unmap(x, padding, lastW - padding));
         invalidate();
         return performClick();
     }
+
 
     @Override
     public boolean performClick() {

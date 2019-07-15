@@ -23,7 +23,6 @@ class Chat {
     final HashMap<String, Sender> senders = new HashMap<>();
     private final ArrayList<Message> messages = new ArrayList<>();
     private ArrayList<Sender> sortedSenders;
-    private GraphData totalMessagesGraph, messagesPerDayGraph;
     private boolean valid = true;
 
     void init(BufferedReader br, LoadingInfoProvider lip) throws IOException {
@@ -43,8 +42,6 @@ class Chat {
             valid = false;
             return;
         }
-        totalMessagesGraph = createTotalMessagesGraph();
-        messagesPerDayGraph = createMessagesPerDayGraph();
     }
 
     private ArrayList<String> readLines(@NonNull BufferedReader br) throws IOException {
@@ -116,7 +113,7 @@ class Chat {
         return sorted;
     }
 
-    private GraphData createTotalMessagesGraph() {
+    GraphData createTotalMessagesGraph() {
         float[] xData, yData;
         int msgCount = messages.size();
         if (msgCount == 0) return null;
@@ -144,7 +141,7 @@ class Chat {
         return gD;
     }
 
-    private GraphData createMessagesPerDayGraph() {
+    GraphData createMessagesPerDayGraph() {
         int msgCount = messages.size();
         if (msgCount == 0) return null;
         Calendar calendar = Calendar.getInstance();
@@ -181,14 +178,6 @@ class Chat {
 
     ArrayList<Sender> getSortedSenders() {
         return sortedSenders;
-    }
-
-    GraphData getTotalMessagesGraph() {
-        return totalMessagesGraph;
-    }
-
-    GraphData getMessagesPerDayGraph() {
-        return messagesPerDayGraph;
     }
 
     int getMaxMsgCount() {

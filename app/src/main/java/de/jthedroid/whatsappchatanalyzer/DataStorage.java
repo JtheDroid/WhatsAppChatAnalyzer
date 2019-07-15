@@ -1,6 +1,7 @@
 package de.jthedroid.whatsappchatanalyzer;
 
 import android.arch.lifecycle.MutableLiveData;
+import android.util.Log;
 
 import java.util.HashMap;
 import java.util.Objects;
@@ -13,15 +14,15 @@ enum LoadingStage {
     ERROR
 }
 
-class DataStorage implements DataProvider, LoadingInfoProvider {
+class DataStorage implements LoadingInfoProvider {
 
     private static final DataStorage instance = new DataStorage();
-    final private MutableLiveData<HashMap<String, ChatData>> dataMap;
+    final private MutableLiveData<HashMap<String, MutableLiveData<GraphData>>> graphDataMap;
     final private MutableLiveData<HashMap<String, Runnable>> runnableMap;
 
     private DataStorage() {
-        dataMap = new MutableLiveData<>();
-        dataMap.setValue(new HashMap<String, ChatData>());
+        graphDataMap = new MutableLiveData<>();
+        graphDataMap.setValue(new HashMap<String, MutableLiveData<GraphData>>());
         runnableMap = new MutableLiveData<>();
         runnableMap.setValue(new HashMap<String, Runnable>());
     }
@@ -30,14 +31,42 @@ class DataStorage implements DataProvider, LoadingInfoProvider {
         return instance;
     }
 
-    @Override
-    public ChatData getData(String key) {
-        return Objects.requireNonNull(dataMap.getValue()).get(key);
+    GraphData getData(String key) {
+        MutableLiveData<GraphData> data = getMutableLiveData(key);
+        return data == null ? null : data.getValue();
     }
 
-    @Override
-    public void putData(String key, ChatData chatData) {
-        Objects.requireNonNull(dataMap.getValue()).put(key, chatData);
+    MutableLiveData<GraphData> getMutableLiveData(String key) {
+        return getMutableLiveData(key, false);
+    }
+
+    MutableLiveData<GraphData> getMutableLiveData(String key, boolean createIfNull) {
+        HashMap<String, MutableLiveData<GraphData>> map = graphDataMap.getValue();
+        MutableLiveData<GraphData> data;
+        if (map != null && map.containsKey(key)) {
+            data = map.get(key);
+        } else data = null;
+        if (createIfNull && data == null) {
+            data = new MutableLiveData<>();
+            if (map != null) map.put(key, data);
+        }
+        return data;
+    }
+
+
+    void putData(String key, GraphData graphData) {
+        HashMap<String, MutableLiveData<GraphData>> map = graphDataMap.getValue();
+        if (map == null) {
+            Log.e("DataStorage putData", "map is null");
+            return;
+        }
+        MutableLiveData<GraphData> data = null;
+        if (map.containsKey(key)) {
+            data = map.get(key);
+        }
+        if (data == null) data = new MutableLiveData<>();
+        map.put(key, data);
+        data.postValue(graphData);
     }
 
     @Override
@@ -50,7 +79,7 @@ class DataStorage implements DataProvider, LoadingInfoProvider {
         if (r != null) r.run();
     }
 
-    public void runRunnableInThread(String key) {
+    void runRunnableInThread(String key) {
         Runnable r = Objects.requireNonNull(runnableMap.getValue()).get(key);
         if (r != null) new Thread(r).start();
     }

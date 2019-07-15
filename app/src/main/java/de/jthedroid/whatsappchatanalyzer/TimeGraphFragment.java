@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 public class TimeGraphFragment extends Fragment {
     private static final String GRAPH_DATA = "graphData";
     private GraphData graphData;
+    private String graphDataKey;
 
     public TimeGraphFragment() {
     }
@@ -28,12 +29,13 @@ public class TimeGraphFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        DataProvider dataProvider = DataStorage.getInstance();
-        if (getArguments() != null && dataProvider != null) {
+        DataStorage dataStorage = DataStorage.getInstance();
+        if (getArguments() != null && dataStorage != null) {
             String key = getArguments().getString(GRAPH_DATA);
-            graphData = (GraphData) dataProvider.getData(key);
+            graphData = dataStorage.getData(key);
+            graphDataKey = key;
         } else
-            Log.e("TimeGraphFragment", "Error creating Fragment: " + (getArguments() == null ? "getArguments()==null" : " ") + (dataProvider == null ? "dataProvider==null" : ""));
+            Log.e("TimeGraphFragment", "Error creating Fragment: " + (getArguments() == null ? "getArguments()==null" : " ") + (dataStorage == null ? "dataStorage==null" : ""));
     }
 
     @Override
@@ -42,8 +44,8 @@ public class TimeGraphFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_time_graph, container, false);
         GraphView graphView = v.findViewById(R.id.graphView);
         graphView.init(graphData, v.findViewById(R.id.progressBarGraphLoading));
+        graphView.setKey(graphDataKey);
+        DataStorage.getInstance().getMutableLiveData(graphDataKey, true).observe(this, graphView.getGraphDataObserver());
         return v;
     }
-
-
 }
