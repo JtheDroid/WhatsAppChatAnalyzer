@@ -18,4 +18,5 @@
     <string name="show_sender_list">Absenderliste anzeigen</string>
     <string name="scroll_top">Nach oben</string>
     <string name="scroll_bottom">Nach unten</string>
+    <string name="go_to_date">Zu Datum springen</string>
 </resources>

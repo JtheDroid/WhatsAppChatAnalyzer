@@ -188,6 +188,20 @@ class Chat {
         return messages.size();
     }
 
+    int getIndexForDate(long time) { //TODO: improve performance (linear search)
+        int nearestIndex = 0;
+        long smallestDiff = Integer.MAX_VALUE;
+        for (int i = 0; i < messages.size(); i++) {
+            long t = messages.get(i).getDate().getTime();
+            long diff = t < time ? time - t : t - time;
+            if (diff < smallestDiff) {
+                smallestDiff = diff;
+                nearestIndex = i;
+            }
+        }
+        return nearestIndex;
+    }
+
     ArrayList<Message> getMessages() {
         return messages;
     }

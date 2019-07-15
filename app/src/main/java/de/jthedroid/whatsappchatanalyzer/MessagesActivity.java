@@ -7,15 +7,18 @@ import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Objects;
 
-public class MessagesActivity extends ThemeMenuActivity {
+public class MessagesActivity extends ThemeMenuActivity implements DateReceiver {
     private RecyclerView recyclerView;
 
     @Override
@@ -60,12 +63,36 @@ public class MessagesActivity extends ThemeMenuActivity {
         });
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        super.onCreateOptionsMenu(menu);
+        final MessagesActivity thisActivity = this;
+        menu.add(R.string.go_to_date).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem menuItem) {
+                DatePickerDialogFragment fragment = new DatePickerDialogFragment();
+                fragment.setDateReceiver(thisActivity);
+                fragment.show(getSupportFragmentManager(), "datePickerDialogFragment");
+                return true;
+            }
+        });
+        return true;
+    }
+
     public void scrollTop(View v) {
         recyclerView.scrollToPosition(0);
     }
 
     public void scrollBottom(View v) {
         recyclerView.scrollToPosition(Objects.requireNonNull(recyclerView.getAdapter()).getItemCount() - 1);
+    }
+
+    @Override
+    public void onReceiveDate(Date d) {
+        Chat chat = DataStorage.chat.getValue();
+        if (chat == null) return;
+        int index = chat.getIndexForDate(d.getTime());
+        recyclerView.scrollToPosition(index);
     }
 }
 

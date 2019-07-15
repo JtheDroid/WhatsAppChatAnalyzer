@@ -33,6 +33,6 @@ public abstract class ThemeMenuActivity extends AppCompatActivity {
                 return true;
             }
         });
-        return super.onCreateOptionsMenu(menu);
+        return true;
     }
 }
