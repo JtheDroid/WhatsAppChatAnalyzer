@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import de.jthedroid.whatsappchatanalyzer.bintree.Sortable;
 
 public class Sender implements Sortable {
-    final String name;
+    private final String name;
     private final ArrayList<Message> messages;
 
     Sender(String s) {
@@ -13,7 +13,7 @@ public class Sender implements Sortable {
         messages = new ArrayList<>();
     }
 
-    public String getName() {
+    String getName() {
         return name;
     }
 

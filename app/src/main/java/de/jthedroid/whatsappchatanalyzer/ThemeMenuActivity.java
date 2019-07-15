@@ -3,10 +3,11 @@ package de.jthedroid.whatsappchatanalyzer;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 
 public abstract class ThemeMenuActivity extends AppCompatActivity {
     private boolean darkTheme;

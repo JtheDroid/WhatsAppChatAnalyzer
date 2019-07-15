@@ -1,6 +1,6 @@
 package de.jthedroid.whatsappchatanalyzer;
 
-import android.arch.lifecycle.MutableLiveData;
+import androidx.lifecycle.MutableLiveData;
 
 interface LoadingInfoProvider {
     MutableLiveData<Chat> chat = new MutableLiveData<>();

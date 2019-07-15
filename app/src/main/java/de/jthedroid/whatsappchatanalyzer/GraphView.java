@@ -1,6 +1,5 @@
 package de.jthedroid.whatsappchatanalyzer;
 
-import android.arch.lifecycle.Observer;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -8,11 +7,13 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Rect;
-import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+
+import androidx.annotation.Nullable;
+import androidx.lifecycle.Observer;
 
 public class GraphView extends View {  //TODO: add touch interaction: (scrolling, zooming?)
     private final Point display;

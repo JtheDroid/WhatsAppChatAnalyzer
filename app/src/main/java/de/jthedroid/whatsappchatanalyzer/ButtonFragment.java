@@ -1,22 +1,23 @@
 package de.jthedroid.whatsappchatanalyzer;
 
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
 
-public class ButtonFragment extends Fragment {
+
+class ButtonFragment extends Fragment {
     private static final String TEXT = "text", KEY_RUNNABLE = "runnableKey";
     private String text, runnableKey;
 
     public ButtonFragment() {
     }
 
-    public static ButtonFragment newInstance(String text, String runnableKey) {
+    static ButtonFragment newInstance(String text, String runnableKey) {
         ButtonFragment fragment = new ButtonFragment();
         Bundle args = new Bundle();
         args.putString(TEXT, text);

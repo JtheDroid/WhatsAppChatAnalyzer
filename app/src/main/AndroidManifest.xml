@@ -11,7 +11,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".SenderListActivity"></activity>
+        <activity android:name=".SenderListActivity" />
         <activity android:name=".MessagesActivity" />
         <activity android:name=".ShareActivity">
             <intent-filter>

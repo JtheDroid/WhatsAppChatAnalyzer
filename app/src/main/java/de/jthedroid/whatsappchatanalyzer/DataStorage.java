@@ -1,7 +1,8 @@
 package de.jthedroid.whatsappchatanalyzer;
 
-import android.arch.lifecycle.MutableLiveData;
 import android.util.Log;
+
+import androidx.lifecycle.MutableLiveData;
 
 import java.util.HashMap;
 import java.util.Objects;
