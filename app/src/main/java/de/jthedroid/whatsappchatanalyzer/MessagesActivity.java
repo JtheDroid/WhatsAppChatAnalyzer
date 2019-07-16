@@ -85,7 +85,9 @@ public class MessagesActivity extends ThemeMenuActivity implements DateReceiver 
     }
 
     public void scrollBottom(View v) {
-        recyclerView.scrollToPosition(Objects.requireNonNull(recyclerView.getAdapter()).getItemCount() - 1);
+        RecyclerView.Adapter adapter = recyclerView.getAdapter();
+        if (adapter != null)
+            recyclerView.scrollToPosition(adapter.getItemCount() - 1);
     }
 
     @Override
