@@ -25,6 +25,10 @@ public class Sender implements Sortable {
         return messages.size();
     }
 
+    ArrayList<Message> getMessages() {
+        return messages;
+    }
+
     @Override
     public int getNum() {
         return getMsgCount();

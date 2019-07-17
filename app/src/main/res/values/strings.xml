@@ -20,4 +20,5 @@
     <string name="scroll_top">To Top</string>
     <string name="scroll_bottom">To Bottom</string>
     <string name="go_to_date">Go to date</string>
+    <string name="details">Details</string>
 </resources>

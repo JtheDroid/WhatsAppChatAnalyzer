@@ -177,6 +177,34 @@ class Chat {
         return gD;
     }
 
+    GraphData createTotalMessagesGraph(Sender sender) {
+        float[] xData, yData;
+        int msgCount = sender.getMsgCount();
+        if (msgCount == 0) return null;
+        float step;
+        if (msgCount <= MAX_GRAPH_POINTS) {
+            xData = new float[msgCount];
+            yData = new float[msgCount];
+            step = 1;
+        } else {
+            xData = new float[MAX_GRAPH_POINTS];
+            yData = new float[MAX_GRAPH_POINTS];
+            step = msgCount / (float) MAX_GRAPH_POINTS;
+        }
+        String[] xDesc = new String[xData.length], yDesc = new String[yData.length];
+        DateFormat df = DateFormat.getDateTimeInstance();
+        for (int i = 0; i < xData.length; i++) {
+            Message msg = sender.getMessages().get((int) (i * step));
+            xData[i] = msg.getDate().getTime(); //timecode
+            xDesc[i] = df.format(msg.getDate());
+            yData[i] = i * step;  //total messages at this point
+            yDesc[i] = "" + (int) yData[i];
+        }
+        GraphData gD = new GraphData(xData, yData, xDesc, yDesc);
+        gD.scale();
+        return gD;
+    }
+
     ArrayList<Sender> getSortedSenders() {
         return sortedSenders;
     }

@@ -88,4 +88,14 @@ class DataStorage implements LoadingInfoProvider {
     void putRunnable(String key, Runnable r) {
         Objects.requireNonNull(runnableMap.getValue()).put(key, r);
     }
+
+    boolean hasRunnable(String key) {
+        HashMap<String, Runnable> map = runnableMap.getValue();
+        return map != null && map.containsKey(key);
+    }
+
+    boolean hasData(String key) {
+        HashMap<String, MutableLiveData<GraphData>> map = graphDataMap.getValue();
+        return map != null && map.containsKey(key);
+    }
 }

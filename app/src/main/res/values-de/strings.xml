@@ -19,4 +19,5 @@
     <string name="scroll_top">Nach oben</string>
     <string name="scroll_bottom">Nach unten</string>
     <string name="go_to_date">Zu Datum springen</string>
+    <string name="details">Details</string>
 </resources>
