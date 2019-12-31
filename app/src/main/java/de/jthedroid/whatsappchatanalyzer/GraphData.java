@@ -1,21 +1,40 @@
 package de.jthedroid.whatsappchatanalyzer;
 
+enum GraphMode {
+    LINEAR,
+    LAST,
+    ZERO
+    //NULL
+}
+
+enum GraphType {
+    DEFAULT,
+    BARGRAPH
+    //HISTOGRAM
+}
+
 class GraphData {
     final private float[] rawXData, rawYData;
     private float[] xData, yData;
     final private String[] xDesc, yDesc;
     final private GraphType graphType;
+    final private GraphMode mode;
 
     GraphData(float[] rawXData, float[] rawYData, String[] xDesc, String[] yDesc) {
         this(rawXData, rawYData, xDesc, yDesc, GraphType.DEFAULT);
     }
 
     GraphData(float[] rawXData, float[] rawYData, String[] xDesc, String[] yDesc, GraphType graphType) {
+        this(rawXData, rawYData, xDesc, yDesc, graphType, GraphMode.LINEAR);
+    }
+
+    GraphData(float[] rawXData, float[] rawYData, String[] xDesc, String[] yDesc, GraphType graphType, GraphMode graphMode) {
         this.rawXData = rawXData;
         this.rawYData = rawYData;
         this.xDesc = xDesc;
         this.yDesc = yDesc;
         this.graphType = graphType;
+        this.mode = graphMode;
         scale();
     }
 
@@ -47,6 +66,7 @@ class GraphData {
         return (val - min) / (max - min);
     }
 
+
     float[] getXData() {
         return xData;
     }
@@ -74,10 +94,8 @@ class GraphData {
     GraphType getGraphType() {
         return graphType;
     }
-}
 
-enum GraphType {
-    DEFAULT,
-    BARGRAPH
-    //HISTOGRAM
+    GraphMode getMode() {
+        return mode;
+    }
 }

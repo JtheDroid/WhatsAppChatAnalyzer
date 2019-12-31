@@ -1,17 +1,11 @@
 package de.jthedroid.whatsappchatanalyzer;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.Point;
-import android.graphics.Rect;
+import android.graphics.*;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
-
 import androidx.annotation.Nullable;
 import androidx.lifecycle.Observer;
 
@@ -256,10 +250,10 @@ public class GraphView extends View {  //TODO: add touch interaction: (scrolling
             }
             Bitmap b = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
             Canvas c = new Canvas(b);
-            GraphType graphType = isInEditMode() ? GraphType.DEFAULT : graphData.getGraphType();
-            switch (graphType) {
+            if (isInEditMode()) drawDefault(c, GraphMode.LINEAR);
+            else switch (graphData.getGraphType()) {
                 case DEFAULT:
-                    drawDefault(c);
+                    drawDefault(c, graphData.getMode());
                     break;
                 case BARGRAPH:
                     drawBarGraph(c);
@@ -270,14 +264,24 @@ public class GraphView extends View {  //TODO: add touch interaction: (scrolling
             running = false;
         }
 
-        private void drawDefault(Canvas c) {
+        private void drawDefault(Canvas c, GraphMode graphMode) {
             p.setColor(getResources().getColor(R.color.colorGraph, null));
             p.setStrokeWidth(3);
             float fromX = padding, toX = w - padding;
             float fromY = h - padding, toY = padding;
             float lastX = map(valuesX[0], fromX, toX), lastY = map(valuesY[0], fromY, toY);
             for (int i = 1; i < valuesX.length; i++) {
-                c.drawLine(lastX, lastY, lastX = map(valuesX[i], fromX, toX), lastY = map(valuesY[i], fromY, toY), p);
+                switch (graphMode) {
+                    case LINEAR:
+                        c.drawLine(lastX, lastY, lastX = map(valuesX[i], fromX, toX), lastY = map(valuesY[i], fromY, toY), p);
+                        break;
+                    case LAST:
+                        c.drawLine(lastX, lastY, lastX = map(valuesX[i], fromX, toX), lastY, p);
+                        c.drawLine(lastX, lastY, lastX, lastY = map(valuesY[i], fromY, toY), p);
+                        break;
+                    case ZERO:
+                        break;
+                }
             }
         }
 

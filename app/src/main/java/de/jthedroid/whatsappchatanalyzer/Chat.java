@@ -2,8 +2,8 @@ package de.jthedroid.whatsappchatanalyzer;
 
 import android.util.Log;
 import android.util.LongSparseArray;
-
 import androidx.annotation.NonNull;
+import de.jthedroid.whatsappchatanalyzer.bintree.BinTree;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -13,8 +13,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
-
-import de.jthedroid.whatsappchatanalyzer.bintree.BinTree;
 
 import static de.jthedroid.whatsappchatanalyzer.LoadingStage.PROCESSING;
 
@@ -137,7 +135,7 @@ class Chat {
             yData[i] = i * step;  //total messages at this point
             yDesc[i] = "" + (int) yData[i];
         }
-        GraphData gD = new GraphData(xData, yData, xDesc, yDesc);
+        GraphData gD = new GraphData(xData, yData, xDesc, yDesc, GraphType.DEFAULT, GraphMode.LAST);
         gD.scale();
         return gD;
     }
@@ -200,7 +198,7 @@ class Chat {
             yData[i] = i * step;  //total messages at this point
             yDesc[i] = "" + (int) yData[i];
         }
-        GraphData gD = new GraphData(xData, yData, xDesc, yDesc);
+        GraphData gD = new GraphData(xData, yData, xDesc, yDesc, GraphType.DEFAULT, GraphMode.LAST);
         gD.scale();
         return gD;
     }
