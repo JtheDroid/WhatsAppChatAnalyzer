@@ -2,9 +2,7 @@ package de.jthedroid.whatsappchatanalyzer;
 
 import java.util.ArrayList;
 
-import de.jthedroid.whatsappchatanalyzer.bintree.Sortable;
-
-public class Sender implements Sortable {
+public class Sender {
     private final String name;
     private final ArrayList<Message> messages;
 
@@ -27,10 +25,5 @@ public class Sender implements Sortable {
 
     ArrayList<Message> getMessages() {
         return messages;
-    }
-
-    @Override
-    public int getNum() {
-        return getMsgCount();
     }
 }

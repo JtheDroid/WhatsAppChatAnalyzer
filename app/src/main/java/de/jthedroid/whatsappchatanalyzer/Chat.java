@@ -3,16 +3,13 @@ package de.jthedroid.whatsappchatanalyzer;
 import android.util.Log;
 import android.util.LongSparseArray;
 import androidx.annotation.NonNull;
-import de.jthedroid.whatsappchatanalyzer.bintree.BinTree;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static de.jthedroid.whatsappchatanalyzer.LoadingStage.PROCESSING;
 
@@ -93,23 +90,7 @@ class Chat {
     }
 
     private ArrayList<Sender> createSortedSenderList() {
-        ArrayList<Sender> senderList = new ArrayList<>(senders.values());
-        ArrayList<Sender> sorted = new ArrayList<>();
-        if (!senders.isEmpty()) {
-            BinTree<Sender> senderTree = new BinTree<>(senderList.get(0));
-            for (int i = 1; i < senderList.size(); i++) {
-                Sender sender = senderList.get(i);
-                senderTree.addContent(sender);
-            }
-            ArrayList<Sender> tempList = senderTree.sort();
-            sorted = new ArrayList<>(tempList);
-            int size = tempList.size();
-            sorted.ensureCapacity(size);
-            for (int i = size - 1; i >= 0; i--) {
-                sorted.set(size - 1 - i, tempList.get(i));
-            }
-        }
-        return sorted;
+        return senders.values().stream().sorted(Comparator.comparing(Sender::getMsgCount).reversed()).collect(Collectors.toCollection(ArrayList::new));
     }
 
     GraphData createTotalMessagesGraph() {
